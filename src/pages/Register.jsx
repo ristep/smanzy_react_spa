@@ -116,7 +116,7 @@ export default function Register() {
                     <Button
                         type="submit"
                         disabled={mutation.isPending}
-                        className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 py-3.5 rounded-xl text-lg shadow-emerald-500/25 transform hover:scale-[1.02] active:scale-[0.98]"
+                        variant="register"
                     >
                         {mutation.isPending ? (
                             <>

@@ -97,7 +97,7 @@ export default function Login() {
                     <Button
                         type="submit"
                         disabled={mutation.isPending}
-                        className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 py-3.5 rounded-xl text-lg shadow-blue-500/25 transform hover:scale-[1.02] active:scale-[0.98]"
+                        variant="login"
                     >
                         {mutation.isPending ? (
                             <>

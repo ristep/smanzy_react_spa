@@ -5,6 +5,8 @@ const variants = {
     secondary: 'border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:ring-indigo-500',
     danger: 'border-transparent text-white bg-red-600 hover:bg-red-700 focus:ring-red-500',
     outline: 'border-indigo-600 text-indigo-600 bg-transparent hover:bg-indigo-50 focus:ring-indigo-500',
+    register: 'w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 py-3.5 rounded-xl text-lg shadow-emerald-500/25 transform hover:scale-[1.02] active:scale-[0.98]',
+    login: 'w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 py-3.5 rounded-xl text-lg shadow-emerald-500/25 transform hover:scale-[1.02] active:scale-[0.98]',
 };
 
 const sizes = {

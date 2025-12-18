@@ -66,7 +66,7 @@ export default function Navbar() {
                                     onClick={handleLogout}
                                     variant="danger"
                                     size="sm"
-                                    className="bg-red-500/10 border-red-500/20 text-red-400 hover:bg-red-500 hover:text-white"
+                                // className="bg-red-500/10 border-red-500/20 text-red-400 hover:bg-red-500 hover:text-white"
                                 >
                                     Logout
                                 </Button>
