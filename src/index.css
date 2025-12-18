@@ -6,12 +6,14 @@
         color-scheme: dark;
         --color-slate-950: #020617;
         --color-slate-50: #f8fafc;
+        scrollbar-gutter: stable;
     }
 
     body {
         background-color: #020617;
         color: #f8fafc;
         -webkit-font-smoothing: antialiased;
+        min-height: 100vh;
     }
 }
 

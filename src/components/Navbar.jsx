@@ -2,16 +2,17 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import clsx from 'clsx';
 import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
+import Button from './Button';
 
 export default function Navbar() {
     const navigate = useNavigate();
     const location = useLocation();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-    // TODO: Add real auth state
     const token = localStorage.getItem('token');
 
     const handleLogout = () => {
+        setIsMobileMenuOpen(false);
         localStorage.removeItem('token');
         navigate('/login');
     };
@@ -22,9 +23,9 @@ export default function Navbar() {
         <Link
             to={to}
             className={clsx(
-                "px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200",
+                "px-3 py-2 rounded-md text-sm font-medium transition-all duration-200",
                 isActive(to)
-                    ? "text-blue-400 bg-blue-500/10"
+                    ? "text-blue-400 bg-blue-500/10 shadow-[inset_0_0_12px_rgba(59,130,246,0.1)]"
                     : "text-slate-300 hover:text-white hover:bg-white/5"
             )}
         >
@@ -33,23 +34,23 @@ export default function Navbar() {
     );
 
     return (
-        <nav className="sticky top-0 z-50 w-full border-b border-white/5 bg-slate-950/80 backdrop-blur-md supports-[backdrop-filter]:bg-slate-950/60">
+        <nav className="fixed top-0 left-0 right-0 z-[100] border-b border-white/10 bg-slate-950/70 backdrop-blur-xl">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
                     {/* Logo */}
                     <div className="flex items-center">
                         <Link to="/" className="flex-shrink-0 flex items-center gap-2 group">
-                            <div className="size-8 rounded-lg bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-blue-500/20 group-hover:shadow-blue-500/40 transition-shadow">
+                            <div className="size-9 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-blue-500/20 group-hover:shadow-blue-500/40 transition-all duration-300 group-hover:scale-105 group-hover:rotate-3">
                                 S
                             </div>
-                            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">
+                            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-slate-400 tracking-tight">
                                 Smanzy
                             </span>
                         </Link>
 
                         {/* Desktop Nav */}
                         <div className="hidden md:block">
-                            <div className="ml-10 flex items-baseline space-x-4">
+                            <div className="ml-10 flex items-baseline space-x-2">
                                 <NavLink to="/">Home</NavLink>
                                 <NavLink to="/about">About</NavLink>
                                 {token && <NavLink to="/profile">Profile</NavLink>}
@@ -61,26 +62,29 @@ export default function Navbar() {
                     <div className="hidden md:block">
                         <div className="ml-4 flex items-center md:ml-6">
                             {token ? (
-                                <button
+                                <Button
                                     onClick={handleLogout}
-                                    className="bg-red-500/10 text-red-400 hover:bg-red-500/20 px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-red-500/20"
+                                    variant="danger"
+                                    size="sm"
+                                    className="bg-red-500/10 border-red-500/20 text-red-400 hover:bg-red-500 hover:text-white"
                                 >
                                     Logout
-                                </button>
+                                </Button>
                             ) : (
-                                <div className="flex space-x-3">
+                                <div className="flex items-center space-x-4">
                                     <Link
                                         to="/login"
-                                        className="text-slate-300 hover:text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-white/5"
+                                        className="text-slate-300 hover:text-white text-sm font-medium transition-colors"
                                     >
                                         Login
                                     </Link>
-                                    <Link
-                                        to="/register"
-                                        className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 hover:-translate-y-0.5"
+                                    <Button
+                                        onClick={() => navigate('/register')}
+                                        size="sm"
+                                        className="rounded-full px-5"
                                     >
                                         Register
-                                    </Link>
+                                    </Button>
                                 </div>
                             )}
                         </div>
@@ -90,7 +94,7 @@ export default function Navbar() {
                     <div className="-mr-2 flex md:hidden">
                         <button
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                            className="inline-flex items-center justify-center p-2 rounded-md text-slate-400 hover:text-white hover:bg-white/5 focus:outline-none"
+                            className="inline-flex items-center justify-center p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 focus:outline-none transition-colors"
                         >
                             <span className="sr-only">Open main menu</span>
                             {isMobileMenuOpen ? <X className="size-6" /> : <Menu className="size-6" />}
@@ -101,19 +105,56 @@ export default function Navbar() {
 
             {/* Mobile menu */}
             {isMobileMenuOpen && (
-                <div className="md:hidden border-t border-white/5 bg-slate-950">
-                    <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                        <Link to="/" className="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-white/10">Home</Link>
-                        <Link to="/about" className="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-white hover:bg-white/10">About</Link>
+                <div className="md:hidden border-t border-white/5 bg-slate-950/95 backdrop-blur-xl animate-in fade-in slide-in-from-top-4 duration-200">
+                    <div className="px-4 pt-4 pb-6 space-y-2">
+                        <Link
+                            to="/"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="block px-4 py-3 rounded-xl text-base font-medium text-white hover:bg-white/10 transition-colors"
+                        >
+                            Home
+                        </Link>
+                        <Link
+                            to="/about"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="block px-4 py-3 rounded-xl text-base font-medium text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
+                        >
+                            About
+                        </Link>
                         {token && (
-                            <Link to="/profile" className="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-white hover:bg-white/10">Profile</Link>
+                            <Link
+                                to="/profile"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className="block px-4 py-3 rounded-xl text-base font-medium text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
+                            >
+                                Profile
+                            </Link>
                         )}
-                        {!token && (
-                            <>
-                                <Link to="/login" className="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:text-white hover:bg-white/10">Login</Link>
-                                <Link to="/register" className="block px-3 py-2 rounded-md text-base font-medium text-blue-400 hover:text-blue-300 hover:bg-blue-500/10">Register</Link>
-                            </>
-                        )}
+                        <div className="pt-4 border-t border-white/5 mt-4">
+                            {!token ? (
+                                <div className="grid grid-cols-2 gap-4">
+                                    <Button
+                                        variant="secondary"
+                                        onClick={() => { navigate('/login'); setIsMobileMenuOpen(false); }}
+                                    >
+                                        Login
+                                    </Button>
+                                    <Button
+                                        onClick={() => { navigate('/register'); setIsMobileMenuOpen(false); }}
+                                    >
+                                        Register
+                                    </Button>
+                                </div>
+                            ) : (
+                                <Button
+                                    variant="danger"
+                                    className="w-full"
+                                    onClick={handleLogout}
+                                >
+                                    Logout
+                                </Button>
+                            )}
+                        </div>
                     </div>
                 </div>
             )}
