@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { User, Mail, Lock, Loader2, UserPlus } from 'lucide-react';
 import api from '../services/api';
+import Button from '../components/Button';
 
 export default function Register() {
     const [formData, setFormData] = useState({
@@ -112,10 +113,10 @@ export default function Register() {
                         </div>
                     </div>
 
-                    <button
+                    <Button
                         type="submit"
                         disabled={mutation.isPending}
-                        className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white py-3.5 rounded-xl font-semibold shadow-lg shadow-emerald-500/25 transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-2"
+                        className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 py-3.5 rounded-xl text-lg shadow-emerald-500/25 transform hover:scale-[1.02] active:scale-[0.98]"
                     >
                         {mutation.isPending ? (
                             <>
@@ -125,7 +126,7 @@ export default function Register() {
                         ) : (
                             'Register'
                         )}
-                    </button>
+                    </Button>
                 </form>
 
                 <p className="mt-8 text-center text-sm text-slate-400">

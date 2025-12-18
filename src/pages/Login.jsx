@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { Mail, Lock, Loader2, LogIn } from 'lucide-react';
 import api from '../services/api';
+import Button from '../components/Button';
 
 export default function Login() {
     const [email, setEmail] = useState('');
@@ -93,10 +94,10 @@ export default function Login() {
                         </div>
                     </div>
 
-                    <button
+                    <Button
                         type="submit"
                         disabled={mutation.isPending}
-                        className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white py-3.5 rounded-xl font-semibold shadow-lg shadow-blue-500/25 transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-2"
+                        className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 py-3.5 rounded-xl text-lg shadow-blue-500/25 transform hover:scale-[1.02] active:scale-[0.98]"
                     >
                         {mutation.isPending ? (
                             <>
@@ -106,7 +107,7 @@ export default function Login() {
                         ) : (
                             'Sign In'
                         )}
-                    </button>
+                    </Button>
                 </form>
 
                 <p className="mt-8 text-center text-sm text-slate-400">
