@@ -54,6 +54,7 @@ export default function Navbar() {
                                 <NavLink to="/">Home</NavLink>
                                 <NavLink to="/about">About</NavLink>
                                 {token && <NavLink to="/profile">Profile</NavLink>}
+                                {token && <NavLink to="/media">Media</NavLink>}
                             </div>
                         </div>
                     </div>
@@ -122,13 +123,22 @@ export default function Navbar() {
                             About
                         </Link>
                         {token && (
-                            <Link
-                                to="/profile"
-                                onClick={() => setIsMobileMenuOpen(false)}
-                                className="block px-4 py-3 rounded-xl text-base font-medium text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
-                            >
-                                Profile
-                            </Link>
+                            <>
+                                <Link
+                                    to="/profile"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                    className="block px-4 py-3 rounded-xl text-base font-medium text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
+                                >
+                                    Profile
+                                </Link>
+                                <Link
+                                    to="/media"
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                    className="block px-4 py-3 rounded-xl text-base font-medium text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
+                                >
+                                    Media
+                                </Link>
+                            </>
                         )}
                         <div className="pt-4 border-t border-white/5 mt-4">
                             {!token ? (

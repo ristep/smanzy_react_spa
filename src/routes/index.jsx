@@ -5,6 +5,7 @@ import About from '../pages/About';
 import Login from '../pages/Login';
 import Register from '../pages/Register';
 import Profile from '../pages/Profile';
+import MediaManager from '../pages/MediaManager';
 import NotFound from '../pages/NotFound';
 
 const router = createBrowserRouter([
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
             {
                 path: 'profile',
                 element: <Profile />, // Should be protected by a wrapper component in real app
+            },
+            {
+                path: 'media',
+                element: <MediaManager />,
             },
             {
                 path: '*',
