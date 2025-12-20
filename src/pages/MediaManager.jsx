@@ -1,15 +1,15 @@
 import { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../services/api';
 import Button from '../components/Button';
 
 export default function MediaManager() {
     const queryClient = useQueryClient();
+    const navigate = useNavigate();
     const fileInputRef = useRef(null);
     const [selectedFile, setSelectedFile] = useState(null);
     const [uploadProgress, setUploadProgress] = useState(0);
-    const [editingMedia, setEditingMedia] = useState(null);
-    const [editFilename, setEditFilename] = useState('');
     const [page, setPage] = useState(1);
     const limit = 20;
 
@@ -19,6 +19,21 @@ export default function MediaManager() {
         queryFn: () => api.get(`/media?limit=${limit}&offset=${(page - 1) * limit}`).then((res) => res.data),
         retry: false,
     });
+
+    // Fetch current user for permissions
+    const { data: userData } = useQuery({
+        queryKey: ['profile'],
+        queryFn: () => api.get('/profile').then((res) => res.data),
+        retry: false,
+    });
+    const currentUser = userData?.data;
+
+    const canManage = (media) => {
+        if (!currentUser) return false;
+        const isAdmin = currentUser.roles?.some(r => r.name === 'admin');
+        const isOwner = media.user_id === currentUser.id;
+        return isAdmin || isOwner;
+    };
 
     // Upload mutation
     const uploadMutation = useMutation({
@@ -50,20 +65,7 @@ export default function MediaManager() {
         }
     });
 
-    // Update mutation
-    const updateMutation = useMutation({
-        mutationFn: ({ id, filename }) => {
-            return api.put(`/media/${id}`, { filename });
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['media'] });
-            setEditingMedia(null);
-            setEditFilename('');
-        },
-        onError: (err) => {
-            alert('Failed to update media: ' + (err.response?.data?.error || err.message));
-        }
-    });
+
 
     // Delete mutation
     const deleteMutation = useMutation({
@@ -92,19 +94,7 @@ export default function MediaManager() {
     };
 
     const handleEdit = (media) => {
-        setEditingMedia(media);
-        setEditFilename(media.filename);
-    };
-
-    const handleSaveEdit = () => {
-        if (editingMedia && editFilename) {
-            updateMutation.mutate({ id: editingMedia.id, filename: editFilename });
-        }
-    };
-
-    const handleCancelEdit = () => {
-        setEditingMedia(null);
-        setEditFilename('');
+        navigate(`/media/edit/${media.id}`);
     };
 
     const handleDelete = (media) => {
@@ -260,27 +250,17 @@ export default function MediaManager() {
                                 {mediaList.map((media) => (
                                     <tr key={media.id} className="hover:bg-gray-50 transition-colors">
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            {editingMedia?.id === media.id ? (
-                                                <input
-                                                    type="text"
-                                                    value={editFilename}
-                                                    onChange={(e) => setEditFilename(e.target.value)}
-                                                    className="max-w-xs block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md py-1 px-2 border"
-                                                    autoFocus
-                                                />
-                                            ) : (
-                                                <div className="flex items-center">
-                                                    <span className="text-2xl mr-3">{getFileIcon(media.mime_type)}</span>
-                                                    <div>
-                                                        <div className="text-sm font-medium text-gray-900">
-                                                            {media.filename}
-                                                        </div>
-                                                        <div className="text-xs text-gray-500">
-                                                            ID: {media.id}
-                                                        </div>
+                                            <div className="flex items-center">
+                                                <span className="text-2xl mr-3">{getFileIcon(media.mime_type)}</span>
+                                                <div>
+                                                    <div className="text-sm font-medium text-gray-900">
+                                                        {media.filename}
+                                                    </div>
+                                                    <div className="text-xs text-gray-500">
+                                                        ID: {media.id}
                                                     </div>
                                                 </div>
-                                            )}
+                                            </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
@@ -294,49 +274,34 @@ export default function MediaManager() {
                                             {formatDate(media.created_at)}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                            {editingMedia?.id === media.id ? (
-                                                <div className="flex justify-end gap-2">
-                                                    <Button
-                                                        onClick={handleSaveEdit}
-                                                        size="sm"
-                                                        disabled={updateMutation.isPending}
-                                                    >
-                                                        {updateMutation.isPending ? 'Saving...' : 'Save'}
-                                                    </Button>
-                                                    <Button
-                                                        onClick={handleCancelEdit}
-                                                        variant="secondary"
-                                                        size="sm"
-                                                    >
-                                                        Cancel
-                                                    </Button>
-                                                </div>
-                                            ) : (
-                                                <div className="flex justify-end gap-2">
-                                                    <button
-                                                        onClick={() => handleDownload(media)}
-                                                        className="text-indigo-600 hover:text-indigo-900 transition-colors"
-                                                        title="Download"
-                                                    >
-                                                        ⬇️
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleEdit(media)}
-                                                        className="text-blue-600 hover:text-blue-900 transition-colors"
-                                                        title="Edit"
-                                                    >
-                                                        ✏️
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleDelete(media)}
-                                                        className="text-red-600 hover:text-red-900 transition-colors"
-                                                        disabled={deleteMutation.isPending}
-                                                        title="Delete"
-                                                    >
-                                                        🗑️
-                                                    </button>
-                                                </div>
-                                            )}
+                                            <div className="flex justify-end gap-2">
+                                                <button
+                                                    onClick={() => handleDownload(media)}
+                                                    className="text-indigo-600 hover:text-indigo-900 transition-colors"
+                                                    title="Download"
+                                                >
+                                                    ⬇️
+                                                </button>
+                                                {canManage(media) && (
+                                                    <>
+                                                        <button
+                                                            onClick={() => handleEdit(media)}
+                                                            className="text-blue-600 hover:text-blue-900 transition-colors"
+                                                            title="Edit"
+                                                        >
+                                                            ✏️
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleDelete(media)}
+                                                            className="text-red-600 hover:text-red-900 transition-colors"
+                                                            disabled={deleteMutation.isPending}
+                                                            title="Delete"
+                                                        >
+                                                            🗑️
+                                                        </button>
+                                                    </>
+                                                )}
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}

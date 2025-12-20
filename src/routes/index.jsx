@@ -6,6 +6,7 @@ import Login from '../pages/Login';
 import Register from '../pages/Register';
 import Profile from '../pages/Profile';
 import MediaManager from '../pages/MediaManager';
+import UpdateMedia from '../pages/UpdateMedia';
 import NotFound from '../pages/NotFound';
 
 const router = createBrowserRouter([
@@ -37,6 +38,10 @@ const router = createBrowserRouter([
             {
                 path: 'media',
                 element: <MediaManager />,
+            },
+            {
+                path: 'media/edit/:id',
+                element: <UpdateMedia />,
             },
             {
                 path: '*',
