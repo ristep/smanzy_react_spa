@@ -18,7 +18,9 @@ export default function Login() {
             // Adjust path if needed based on actual API response
             const token = data.data?.data?.access_token || data.data?.access_token;
             if (token) {
+                localStorage.setItem('user', JSON.stringify(data.data?.data?.user));
                 localStorage.setItem('token', token);
+                localStorage.setItem('refresh_token', data.data?.data?.refresh_token);
             }
             navigate('/profile');
         },

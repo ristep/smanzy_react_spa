@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../services/api';
 import Button from '../components/Button';
 import IconButton from '../components/IconButton';
+import ReactJSON from 'react-json-view';
 
 export default function MediaManager() {
     const navigate = useNavigate();
@@ -225,10 +226,9 @@ export default function MediaManager() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             {/* Header */}
             <div className="mb-8">
-                <h1 className="text-4xl font-bold text-gray-900 mb-2">Media Manager</h1>
-                <p className="text-gray-600">Upload, manage, and organize your media files</p>
+                <h1 className="text-4xl font-bold text-gray-400 mb-2">Media Manager</h1>
+                <p className="text-gray-400">Upload, manage, and organize your media files</p>
             </div>
-
             {/* Upload Section */}
             <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6 mb-8">
                 <h2 className="text-xl font-semibold text-gray-900 mb-4">Upload New File</h2>
