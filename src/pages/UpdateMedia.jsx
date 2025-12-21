@@ -65,7 +65,7 @@ export default function UpdateMedia() {
             queryClient.invalidateQueries({ queryKey: ['media'] });
             queryClient.invalidateQueries({ queryKey: ['media', id] });
             // alert('Media updated successfully'); // Better to just navigate or show toast, but alert is consistent with MediaManager
-            navigate('/media');
+            navigate(-1);
         },
         onError: (err) => {
             alert('Failed to update media: ' + (err.response?.data?.error || err.message));
@@ -86,7 +86,7 @@ export default function UpdateMedia() {
             <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
                 <p className="text-red-600 font-medium">Error loading media</p>
                 <p className="text-red-500 text-sm mt-2">{error.message}</p>
-                <Button className="mt-4" onClick={() => navigate('/media')}>Back to Media</Button>
+                <Button className="mt-4" onClick={() => navigate(-1)}>Back to Media</Button>
             </div>
         </div>
     );
@@ -98,7 +98,7 @@ export default function UpdateMedia() {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div className="flex items-center justify-between mb-8">
                 <h1 className="text-3xl font-bold text-gray-900">Update Media</h1>
-                <Button variant="secondary" size="sm" onClick={() => navigate('/media')}>
+                <Button variant="secondary" size="sm" onClick={() => navigate(-1)}>
                     &larr; Back to List
                 </Button>
             </div>
@@ -136,7 +136,7 @@ export default function UpdateMedia() {
                                 </div>
                                 <div className="sm:col-span-2">
                                     <a href={currentFileUrl} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:text-indigo-800 text-sm font-medium inline-flex items-center">
-                                        View/Download Original File &nearr;
+                                        View/Download Original File
                                     </a>
                                 </div>
                             </dl>
@@ -155,8 +155,21 @@ export default function UpdateMedia() {
                             type="text"
                             value={filename}
                             onChange={(e) => setFilename(e.target.value)}
-                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2.5 border transition-colors"
                             placeholder="Enter filename"
+                            className="
+                                        block w-full rounded-md border
+                                        bg-white text-gray-900
+                                        border-gray-300
+                                        placeholder-gray-400
+                                        shadow-sm p-2.5 sm:text-sm
+                                        focus:border-indigo-500 focus:ring-indigo-500
+                                        transition-colors
+
+                                        dark:bg-gray-900
+                                        dark:text-gray-100
+                                        dark:border-gray-700
+                                        dark:placeholder-gray-500
+                                    "
                         />
                     </div>
 
@@ -193,7 +206,7 @@ export default function UpdateMedia() {
                 </div>
 
                 <div className="bg-gray-50 px-6 py-4 flex justify-end gap-3 border-t border-gray-200">
-                    <Button variant="secondary" onClick={() => navigate('/media')}>
+                    <Button variant="secondary" onClick={() => navigate(-1)}>
                         Cancel
                     </Button>
                     <Button

@@ -1,24 +1,39 @@
 import { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../services/api';
 import Button from '../components/Button';
+import IconButton from '../components/IconButton';
 
 export default function MediaManager() {
-    const queryClient = useQueryClient();
     const navigate = useNavigate();
-    const fileInputRef = useRef(null);
+    const [searchParams, setSearchParams] = useSearchParams();
+    const queryClient = useQueryClient();
     const [selectedFile, setSelectedFile] = useState(null);
     const [uploadProgress, setUploadProgress] = useState(0);
-    const [page, setPage] = useState(1);
-    const limit = 20;
+    const fileInputRef = useRef(null);
+
+    const page = parseInt(searchParams.get('page')) || 1;
+    const limit = 3; // Number of items per page
 
     // Fetch media list
     const { isPending, error, data } = useQuery({
         queryKey: ['media', page],
-        queryFn: () => api.get(`/media?limit=${limit}&offset=${(page - 1) * limit}`).then((res) => res.data),
+        queryFn: () => api.get(`/media?limit=${limit}&offset=${(page - 1) * limit}`).then((res) => {
+            // Handle new response structure { data: { files: [], total: 0 } }
+            // or { data: [] } if not yet deployed backend
+            // Our backend now returns data: { files: [], total: X }
+            return res.data;
+        }),
+        keepPreviousData: true, // Keep data while fetching new page
         retry: false,
     });
+
+    const handlePageChange = (newPage) => {
+        setSearchParams({ page: newPage });
+        // Optional: Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     // Fetch current user for permissions
     const { data: userData } = useQuery({
@@ -27,6 +42,11 @@ export default function MediaManager() {
         retry: false,
     });
     const currentUser = userData?.data;
+
+    const canView = (media) => {
+        // if (!currentUser) return true;
+        return true;
+    };
 
     const canManage = (media) => {
         if (!currentUser) return false;
@@ -157,7 +177,49 @@ export default function MediaManager() {
         );
     }
 
-    const mediaList = data?.data || [];
+    // Handle new response structure
+    const responseData = data?.data;
+    const mediaList = responseData?.files || []; // New structure: { files: [], total: X }
+    const totalItems = responseData?.total || 0;
+    const totalPages = Math.ceil(totalItems / limit);
+
+    // Generate page numbers
+    const getPageNumbers = () => {
+        const pageNumbers = [];
+        const maxPagesToShow = 5;
+
+        if (totalPages <= maxPagesToShow) {
+            for (let i = 1; i <= totalPages; i++) {
+                pageNumbers.push(i);
+            }
+        } else {
+            // Always show first, last, and pages around current
+            let startPage = Math.max(1, page - 2);
+            let endPage = Math.min(totalPages, page + 2);
+
+            if (page <= 3) {
+                endPage = Math.min(totalPages, 5);
+            }
+            if (page >= totalPages - 2) {
+                startPage = Math.max(1, totalPages - 4);
+            }
+
+            if (startPage > 1) {
+                pageNumbers.push(1);
+                if (startPage > 2) pageNumbers.push('...');
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                pageNumbers.push(i);
+            }
+
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) pageNumbers.push('...');
+                pageNumbers.push(totalPages);
+            }
+        }
+        return pageNumbers;
+    };
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -213,16 +275,26 @@ export default function MediaManager() {
 
             {/* Media List */}
             <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
-                <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
-                    <h2 className="text-xl font-semibold text-gray-900">Your Media Files</h2>
-                    <p className="text-sm text-gray-600 mt-1">{mediaList.length} files</p>
+                <div className="px-6 py-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+                    <div>
+                        <h2 className="text-xl font-semibold text-gray-900">Your Media Files</h2>
+                        <p className="text-sm text-gray-600 mt-1">
+                            Showing {mediaList.length} of {totalItems} files
+                        </p>
+                    </div>
+                    {/* Pagination - Top */}
+                    {totalPages > 1 && (
+                        <div className="text-sm text-gray-600">
+                            Page {page} of {totalPages}
+                        </div>
+                    )}
                 </div>
 
                 {mediaList.length === 0 ? (
                     <div className="text-center py-12">
                         <div className="text-6xl mb-4">📁</div>
-                        <p className="text-gray-500 text-lg">No media files yet</p>
-                        <p className="text-gray-400 text-sm mt-2">Upload your first file to get started</p>
+                        <p className="text-gray-500 text-lg">No media files found</p>
+                        <p className="text-gray-400 text-sm mt-2">Upload a file or check other pages</p>
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
@@ -275,32 +347,27 @@ export default function MediaManager() {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <div className="flex justify-end gap-2">
-                                                <button
+                                                <IconButton
                                                     onClick={() => handleDownload(media)}
-                                                    className="text-indigo-600 hover:text-indigo-900 transition-colors"
+                                                    disabled={!canView(media)}
                                                     title="Download"
                                                 >
                                                     ⬇️
-                                                </button>
-                                                {canManage(media) && (
-                                                    <>
-                                                        <button
-                                                            onClick={() => handleEdit(media)}
-                                                            className="text-blue-600 hover:text-blue-900 transition-colors"
-                                                            title="Edit"
-                                                        >
-                                                            ✏️
-                                                        </button>
-                                                        <button
-                                                            onClick={() => handleDelete(media)}
-                                                            className="text-red-600 hover:text-red-900 transition-colors"
-                                                            disabled={deleteMutation.isPending}
-                                                            title="Delete"
-                                                        >
-                                                            🗑️
-                                                        </button>
-                                                    </>
-                                                )}
+                                                </IconButton>
+                                                <IconButton
+                                                    onClick={() => handleEdit(media)}
+                                                    disabled={!canManage(media)}
+                                                    title="Edit"
+                                                >
+                                                    ✏️
+                                                </IconButton>
+                                                <IconButton
+                                                    onClick={() => handleDelete(media)}
+                                                    disabled={!canManage(media)}
+                                                    title="Delete"
+                                                >
+                                                    🗑️
+                                                </IconButton>
                                             </div>
                                         </td>
                                     </tr>
@@ -311,23 +378,43 @@ export default function MediaManager() {
                 )}
 
                 {/* Pagination */}
-                {mediaList.length > 0 && (
+                {mediaList.length > 0 && totalPages > 1 && (
                     <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-between">
-                        <div className="text-sm text-gray-700">
-                            Page <span className="font-medium">{page}</span>
+                        <div className="hidden sm:block text-sm text-gray-700">
+                            Page <span className="font-medium">{page}</span> of <span className="font-medium">{totalPages}</span>
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 items-center justify-center w-full sm:w-auto">
                             <Button
-                                onClick={() => setPage(p => Math.max(1, p - 1))}
+                                onClick={() => handlePageChange(page - 1)}
                                 disabled={page === 1}
                                 variant="secondary"
                                 size="sm"
                             >
                                 Previous
                             </Button>
+
+                            <div className="flex gap-1">
+                                {getPageNumbers().map((pageNum, index) => (
+                                    pageNum === '...' ? (
+                                        <span key={`dots-${index}`} className="px-3 py-1 text-gray-500">...</span>
+                                    ) : (
+                                        <button
+                                            key={pageNum}
+                                            onClick={() => handlePageChange(pageNum)}
+                                            className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${pageNum === page
+                                                ? 'bg-indigo-600 text-white'
+                                                : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
+                                                }`}
+                                        >
+                                            {pageNum}
+                                        </button>
+                                    )
+                                ))}
+                            </div>
+
                             <Button
-                                onClick={() => setPage(p => p + 1)}
-                                disabled={mediaList.length < limit}
+                                onClick={() => handlePageChange(page + 1)}
+                                disabled={page >= totalPages}
                                 variant="secondary"
                                 size="sm"
                             >
