@@ -4,6 +4,7 @@ import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import Button from './Button';
 
+
 export default function Navbar() {
     const navigate = useNavigate();
     const location = useLocation();

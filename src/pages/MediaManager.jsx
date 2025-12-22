@@ -4,7 +4,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../services/api';
 import Button from '../components/Button';
 import IconButton from '../components/IconButton';
-import ReactJSON from 'react-json-view';
+import Panel from '../components/Panel';
+import { Edit, Download, Trash2, File, FileText, FileArchive, Image, Video, FileMusic } from 'lucide-react';
+// import ReactJSON from 'react-json-view';
 
 export default function MediaManager() {
     const navigate = useNavigate();
@@ -87,7 +89,6 @@ export default function MediaManager() {
     });
 
 
-
     // Delete mutation
     const deleteMutation = useMutation({
         mutationFn: (id) => {
@@ -147,13 +148,13 @@ export default function MediaManager() {
     };
 
     const getFileIcon = (mimeType) => {
-        if (!mimeType) return '📄';
-        if (mimeType.startsWith('image/')) return '🖼️';
-        if (mimeType.startsWith('video/')) return '🎥';
-        if (mimeType.startsWith('audio/')) return '🎵';
-        if (mimeType.includes('pdf')) return '📕';
-        if (mimeType.includes('zip') || mimeType.includes('rar')) return '📦';
-        return '📄';
+        if (!mimeType) return <File />;
+        if (mimeType.startsWith('image/')) return <Image />;
+        if (mimeType.startsWith('video/')) return <Video />;
+        if (mimeType.startsWith('audio/')) return <FileMusic />;
+        if (mimeType.includes('pdf')) return <FileText />;
+        if (mimeType.includes('zip') || mimeType.includes('rar')) return <FileArchive />;
+        return <File />;
     };
 
     if (isPending) {
@@ -230,24 +231,16 @@ export default function MediaManager() {
                 <p className="text-gray-400">Upload, manage, and organize your media files</p>
             </div>
             {/* Upload Section */}
-            <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6 mb-8">
+            <Panel className="mb-4">
                 <h2 className="text-xl font-semibold text-gray-900 mb-4">Upload New File</h2>
                 <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-end">
                     <div className="flex-1 w-full">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Select File
-                        </label>
                         <input
                             ref={fileInputRef}
                             type="file"
                             onChange={handleFileSelect}
                             className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-l-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
                         />
-                        {selectedFile && (
-                            <p className="mt-2 text-sm text-gray-600">
-                                Selected: <span className="font-medium">{selectedFile.name}</span> ({formatFileSize(selectedFile.size)})
-                            </p>
-                        )}
                     </div>
                     <Button
                         onClick={handleUpload}
@@ -271,10 +264,10 @@ export default function MediaManager() {
                         </div>
                     </div>
                 )}
-            </div>
+            </Panel>
 
             {/* Media List */}
-            <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+            <Panel>
                 <div className="px-6 py-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
                     <div>
                         <h2 className="text-xl font-semibold text-gray-900">Your Media Files</h2>
@@ -302,7 +295,7 @@ export default function MediaManager() {
                             <thead className="bg-gray-50">
                                 <tr>
                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                        File
+                                        File Name
                                     </th>
                                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Type
@@ -323,7 +316,6 @@ export default function MediaManager() {
                                     <tr key={media.id} className="hover:bg-gray-50 transition-colors">
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex items-center">
-                                                <span className="text-2xl mr-3">{getFileIcon(media.mime_type)}</span>
                                                 <div>
                                                     <div className="text-sm font-medium text-gray-900">
                                                         {media.filename}
@@ -336,7 +328,7 @@ export default function MediaManager() {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                                                {media.mime_type || 'unknown'}
+                                                {getFileIcon(media.mime_type)}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -352,21 +344,21 @@ export default function MediaManager() {
                                                     disabled={!canView(media)}
                                                     title="Download"
                                                 >
-                                                    ⬇️
+                                                    <Download />
                                                 </IconButton>
                                                 <IconButton
                                                     onClick={() => handleEdit(media)}
                                                     disabled={!canManage(media)}
                                                     title="Edit"
                                                 >
-                                                    ✏️
+                                                    <Edit />
                                                 </IconButton>
                                                 <IconButton
                                                     onClick={() => handleDelete(media)}
                                                     disabled={!canManage(media)}
                                                     title="Delete"
                                                 >
-                                                    🗑️
+                                                    <Trash2 />
                                                 </IconButton>
                                             </div>
                                         </td>
@@ -423,7 +415,7 @@ export default function MediaManager() {
                         </div>
                     </div>
                 )}
-            </div>
+            </Panel>
         </div>
     );
 }
