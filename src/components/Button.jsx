@@ -1,4 +1,5 @@
 import React from 'react';
+import 
 
 const variants = {
     primary: 'border-transparent text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500',
@@ -25,7 +26,7 @@ export default function Button({
     onClick,
     ...props
 }) {
-    const baseClasses = 'inline-flex items-center border font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed';
+    const baseClasses = 'inline-flex items-center font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed';
 
     const combinedClasses = `${baseClasses} ${variants[variant]} ${sizes[size]} ${className}`;
 

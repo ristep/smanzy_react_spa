@@ -17,7 +17,7 @@ export default function MediaManager() {
     const fileInputRef = useRef(null);
 
     const page = parseInt(searchParams.get('page')) || 1;
-    const limit = 3; // Number of items per page
+    const limit = 5; // Number of items per page
 
     // Fetch media list
     const { isPending, error, data } = useQuery({
@@ -161,8 +161,8 @@ export default function MediaManager() {
         return (
             <div className="flex items-center justify-center min-h-[60vh]">
                 <div className="text-center">
-                    <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-                    <p className="text-gray-600">Loading media...</p>
+                    <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-accent mx-auto mb-4"></div>
+                    <p className="text-text-secondary">Loading media...</p>
                 </div>
             </div>
         );
@@ -171,9 +171,9 @@ export default function MediaManager() {
     if (error) {
         return (
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-                    <p className="text-red-600 font-medium">Error loading media</p>
-                    <p className="text-red-500 text-sm mt-2">{error.message}</p>
+                <div className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg p-6 text-center">
+                    <p className="text-red-600 dark:text-red-400 font-medium">Error loading media</p>
+                    <p className="text-red-500 dark:text-red-400 text-sm mt-2">{error.message}</p>
                 </div>
             </div>
         );
@@ -227,19 +227,19 @@ export default function MediaManager() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             {/* Header */}
             <div className="mb-8">
-                <h1 className="text-4xl font-bold text-gray-400 mb-2">Media Manager</h1>
-                <p className="text-gray-400">Upload, manage, and organize your media files</p>
+                <h1 className="text-4xl font-bold text-text-primary mb-2">Media Manager</h1>
+                <p className="text-text-secondary">Upload, manage, and organize your media files</p>
             </div>
             {/* Upload Section */}
             <Panel className="mb-4">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">Upload New File</h2>
+                <h2 className="text-xl font-semibold text-text-primary mb-4">Upload New File</h2>
                 <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-end">
                     <div className="flex-1 w-full">
                         <input
                             ref={fileInputRef}
                             type="file"
                             onChange={handleFileSelect}
-                            className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-l-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                            className="block w-full text-sm text-text-primary border border-input-border rounded-lg cursor-pointer bg-input focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-l-lg file:border-0 file:text-sm file:font-semibold file:bg-accent/10 file:text-accent hover:file:bg-accent/20"
                         />
                     </div>
                     <Button
@@ -252,13 +252,13 @@ export default function MediaManager() {
                 </div>
                 {uploadProgress > 0 && uploadProgress < 100 && (
                     <div className="mt-4">
-                        <div className="flex justify-between text-sm text-gray-600 mb-1">
+                        <div className="flex justify-between text-sm text-text-secondary mb-1">
                             <span>Upload Progress</span>
                             <span>{uploadProgress}%</span>
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2.5">
+                        <div className="w-full bg-background-tertiary rounded-full h-2.5">
                             <div
-                                className="bg-indigo-600 h-2.5 rounded-full transition-all duration-300"
+                                className="bg-accent h-2.5 rounded-full transition-all duration-300"
                                 style={{ width: `${uploadProgress}%` }}
                             ></div>
                         </div>
@@ -268,16 +268,16 @@ export default function MediaManager() {
 
             {/* Media List */}
             <Panel>
-                <div className="px-6 py-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+                <div className="px-6 py-4 bg-background-secondary border-b border-border flex justify-between items-center">
                     <div>
-                        <h2 className="text-xl font-semibold text-gray-900">Your Media Files</h2>
-                        <p className="text-sm text-gray-600 mt-1">
+                        <h2 className="text-xl font-semibold text-text-primary">Your Media Files</h2>
+                        <p className="text-sm text-text-secondary mt-1">
                             Showing {mediaList.length} of {totalItems} files
                         </p>
                     </div>
                     {/* Pagination - Top */}
                     {totalPages > 1 && (
-                        <div className="text-sm text-gray-600">
+                        <div className="text-sm text-text-secondary">
                             Page {page} of {totalPages}
                         </div>
                     )}
@@ -286,55 +286,55 @@ export default function MediaManager() {
                 {mediaList.length === 0 ? (
                     <div className="text-center py-12">
                         <div className="text-6xl mb-4">📁</div>
-                        <p className="text-gray-500 text-lg">No media files found</p>
-                        <p className="text-gray-400 text-sm mt-2">Upload a file or check other pages</p>
+                        <p className="text-text-secondary text-lg">No media files found</p>
+                        <p className="text-text-muted text-sm mt-2">Upload a file or check other pages</p>
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-50">
+                        <table className="min-w-full divide-y divide-border">
+                            <thead className="bg-background-secondary">
                                 <tr>
-                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">
                                         File Name
                                     </th>
-                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">
                                         Type
                                     </th>
-                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">
                                         Size
                                     </th>
-                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">
                                         Uploaded
                                     </th>
-                                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-text-muted uppercase tracking-wider">
                                         Actions
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
+                            <tbody className="bg-card divide-y divide-border">
                                 {mediaList.map((media) => (
-                                    <tr key={media.id} className="hover:bg-gray-50 transition-colors">
+                                    <tr key={media.id} className="hover:bg-background-secondary transition-colors">
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex items-center">
                                                 <div>
-                                                    <div className="text-sm font-medium text-gray-900">
+                                                    <div className="text-sm font-medium text-text-primary">
                                                         {media.filename}
                                                     </div>
-                                                    <div className="text-xs text-gray-500">
+                                                    <div className="text-xs text-text-muted">
                                                         ID: {media.id}
                                                     </div>
                                                 </div>
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-accent/10 text-accent">
                                                 {getFileIcon(media.mime_type)}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">
                                             {formatFileSize(media.size)}
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">
                                             {formatDate(media.created_at)}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -371,8 +371,8 @@ export default function MediaManager() {
 
                 {/* Pagination */}
                 {mediaList.length > 0 && totalPages > 1 && (
-                    <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-between">
-                        <div className="hidden sm:block text-sm text-gray-700">
+                    <div className="px-6 py-4 bg-background-secondary border-t border-border flex items-center justify-between">
+                        <div className="hidden sm:block text-sm text-text-secondary">
                             Page <span className="font-medium">{page}</span> of <span className="font-medium">{totalPages}</span>
                         </div>
                         <div className="flex gap-2 items-center justify-center w-full sm:w-auto">
@@ -388,18 +388,16 @@ export default function MediaManager() {
                             <div className="flex gap-1">
                                 {getPageNumbers().map((pageNum, index) => (
                                     pageNum === '...' ? (
-                                        <span key={`dots-${index}`} className="px-3 py-1 text-gray-500">...</span>
+                                        <span key={`dots-${index}`} className="px-3 py-1 text-text-muted">...</span>
                                     ) : (
-                                        <button
+                                        <Button
                                             key={pageNum}
                                             onClick={() => handlePageChange(pageNum)}
-                                            className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${pageNum === page
-                                                ? 'bg-indigo-600 text-white'
-                                                : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300'
-                                                }`}
+                                            variant="secondary"
+                                            size="sm"
                                         >
                                             {pageNum}
-                                        </button>
+                                        </Button>
                                     )
                                 ))}
                             </div>

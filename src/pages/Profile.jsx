@@ -78,10 +78,10 @@ export default function Profile() {
         }
     };
 
-    if (isPending) return <div className="text-center py-10">Loading profile...</div>;
+    if (isPending) return <div className="text-center py-10 text-text-secondary">Loading profile...</div>;
 
     if (error) return (
-        <div className="text-center py-10 text-red-600">
+        <div className="text-center py-10 text-red-600 dark:text-red-400">
             Error loading profile: {error.message}
         </div>
     );
@@ -89,30 +89,30 @@ export default function Profile() {
     const user = data.data;
 
     const ProfileField = ({ label, name, value, type = "text" }) => (
-        <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 border-b border-gray-200 last:border-0">
-            <dt className="text-sm font-medium text-gray-500">{label}</dt>
-            <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+        <div className="bg-background-secondary px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 border-b border-border last:border-0">
+            <dt className="text-sm font-medium text-text-muted">{label}</dt>
+            <dd className="mt-1 text-sm text-text-primary sm:mt-0 sm:col-span-2">
                 {isEditing ? (
                     <input
                         type={type}
                         name={name}
                         value={value}
                         onChange={handleInputChange}
-                        className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md py-2 px-3 border"
+                        className="max-w-lg block w-full shadow-sm focus:ring-accent focus:border-accent sm:max-w-xs sm:text-sm border-input-border rounded-md py-2 px-3 border bg-input text-text-primary"
                     />
                 ) : (
-                    value || <span className="text-gray-400 italic">Not set</span>
+                    value || <span className="text-text-muted italic">Not set</span>
                 )}
             </dd>
         </div>
     );
 
     return (
-        <div className="max-w-2xl mx-auto bg-white shadow-xl overflow-hidden sm:rounded-xl border border-gray-200 my-8">
-            <div className="px-4 py-5 sm:px-6 flex justify-between items-center bg-gray-50">
+        <div className="max-w-2xl mx-auto bg-card shadow-xl overflow-hidden sm:rounded-xl border border-card-border my-8">
+            <div className="px-4 py-5 sm:px-6 flex justify-between items-center bg-background-secondary">
                 <div>
-                    <h3 className="text-xl leading-6 font-bold text-gray-900">User Profile</h3>
-                    <p className="mt-1 max-w-2xl text-sm text-gray-500">Personal details and application role.</p>
+                    <h3 className="text-xl leading-6 font-bold text-text-primary">User Profile</h3>
+                    <p className="mt-1 max-w-2xl text-sm text-text-secondary">Personal details and application role.</p>
                 </div>
                 <div className="flex space-x-3">
                     {!isEditing ? (
@@ -139,12 +139,12 @@ export default function Profile() {
                     )}
                 </div>
             </div>
-            <div className="border-t border-gray-200">
+            <div className="border-t border-border">
                 <dl>
                     <ProfileField label="Full name" name="name" value={formData.name} />
-                    <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 border-b border-gray-200">
-                        <dt className="text-sm font-medium text-gray-500">Email address</dt>
-                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{user.email}</dd>
+                    <div className="bg-card px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 border-b border-border">
+                        <dt className="text-sm font-medium text-text-muted">Email address</dt>
+                        <dd className="mt-1 text-sm text-text-primary sm:mt-0 sm:col-span-2">{user.email}</dd>
                     </div>
                     <ProfileField label="Telephone" name="tel" value={formData.tel} />
                     <ProfileField label="Age" name="age" value={formData.age} type="number" />
@@ -153,19 +153,19 @@ export default function Profile() {
                     <ProfileField label="City" name="city" value={formData.city} />
                     <ProfileField label="Country" name="country" value={formData.country} />
 
-                    <div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 border-b border-gray-200">
-                        <dt className="text-sm font-medium text-gray-500">Roles</dt>
-                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                    <div className="bg-card px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 border-b border-border">
+                        <dt className="text-sm font-medium text-text-muted">Roles</dt>
+                        <dd className="mt-1 text-sm text-text-primary sm:mt-0 sm:col-span-2">
                             {user.roles && user.roles.map(r => (
-                                <span key={r.id} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 mr-2 capitalize">
+                                <span key={r.id} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent/10 text-accent mr-2 capitalize">
                                     {r.name}
                                 </span>
                             ))}
                         </dd>
                     </div>
-                    <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt className="text-sm font-medium text-gray-500">Member since</dt>
-                        <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                    <div className="bg-background-secondary px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                        <dt className="text-sm font-medium text-text-muted">Member since</dt>
+                        <dd className="mt-1 text-sm text-text-primary sm:mt-0 sm:col-span-2">
                             {new Date(user.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
                         </dd>
                     </div>

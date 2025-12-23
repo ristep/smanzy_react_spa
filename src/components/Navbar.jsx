@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import Button from './Button';
-
+import ThemeToggle from './ThemeToggle';
 
 export default function Navbar() {
     const navigate = useNavigate();
@@ -62,13 +62,13 @@ export default function Navbar() {
 
                     {/* Desktop Auth Buttons */}
                     <div className="hidden md:block">
-                        <div className="ml-4 flex items-center md:ml-6">
+                        <div className="ml-4 flex items-center gap-2 md:ml-6">
+                            <ThemeToggle />
                             {token ? (
                                 <Button
                                     onClick={handleLogout}
                                     variant="danger"
                                     size="sm"
-                                // className="bg-red-500/10 border-red-500/20 text-red-400 hover:bg-red-500 hover:text-white"
                                 >
                                     Logout
                                 </Button>
@@ -83,7 +83,6 @@ export default function Navbar() {
                                     <Button
                                         onClick={() => navigate('/register')}
                                         size="sm"
-                                        className="rounded-full px-5"
                                     >
                                         Register
                                     </Button>
@@ -109,6 +108,11 @@ export default function Navbar() {
             {isMobileMenuOpen && (
                 <div className="md:hidden border-t border-white/5 bg-slate-950/95 backdrop-blur-xl animate-in fade-in slide-in-from-top-4 duration-200">
                     <div className="px-4 pt-4 pb-6 space-y-2">
+                        {/* Theme Toggle in Mobile Menu */}
+                        <div className="flex items-center justify-between pb-2 mb-2 border-b border-white/5">
+                            <span className="text-sm font-medium text-slate-400">Theme</span>
+                            <ThemeToggle />
+                        </div>
                         <Link
                             to="/"
                             onClick={() => setIsMobileMenuOpen(false)}

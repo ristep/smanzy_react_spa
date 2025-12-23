@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Panel = ({ children, className = "" }) => {
-    const baseClassName = "bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden p-4";
+    const baseClassName = "bg-card border border-card-border text-text-primary rounded-xl shadow-md overflow-hidden p-4 transition-all duration-300";
 
     return (
         <div className={`${baseClassName} ${className}`}>
