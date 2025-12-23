@@ -5,7 +5,6 @@ import { Mail, Lock, Loader2, LogIn } from 'lucide-react';
 import api from '../services/api';
 import Button from '../components/Button';
 import styles from './Login.module.scss';
-import clsx from 'clsx';
 
 export default function Login() {
     const [email, setEmail] = useState('');

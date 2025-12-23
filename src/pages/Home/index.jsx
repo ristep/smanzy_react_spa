@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, Zap, Shield, Globe } from 'lucide-react';
-import styles from './Home.module.scss';
-import clsx from 'clsx';
+import styles from './index.module.scss';
 
 export default function Home() {
     return (

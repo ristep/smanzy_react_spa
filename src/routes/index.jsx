@@ -1,14 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom';
 import MainLayout from '@/layout/MainLayout';
-import Home from '@/pages/Home';
-import About from '@/pages/About';
-import Login from '@/pages/Login';
-import Register from '@/pages/Register';
-import Profile from '@/pages/Profile';
-import MediaManager from '@/pages/MediaManager';
-import UpdateMedia from '@/pages/UpdateMedia';
-import NotFound from '@/pages/NotFound';
-import MediaThumb from '@/pages/MediaThumb';
+
+import { Home, About, Login, Register, Profile, MediaManager, UpdateMedia, NotFound, MediaThumb } from '@/pages';
 
 const router = createBrowserRouter([
     {
@@ -34,7 +27,7 @@ const router = createBrowserRouter([
             },
             {
                 path: 'profile',
-                element: <Profile />, // Should be protected by a wrapper component in real app
+                element: <Profile />,
             },
             {
                 path: 'media',

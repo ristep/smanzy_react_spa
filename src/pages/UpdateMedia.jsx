@@ -1,17 +1,16 @@
 import { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import api from '../services/api';
-import Button from '../components/Button';
-import styles from './UpdateMedia.module.scss';
-import clsx from 'clsx';
+import api from '@/services/api';
+import Button from '@/components/Button';
+import styles from '@/pages/UpdateMedia.module.scss';
 
 export default function UpdateMedia() {
     const { id } = useParams();
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const fileInputRef = useRef(null);
-    const [filename, setFilename] = useState('');
+    const [filename, setFilename] = useState(null);
     const [selectedFile, setSelectedFile] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
 
@@ -22,11 +21,6 @@ export default function UpdateMedia() {
         retry: false,
     });
 
-    useEffect(() => {
-        if (media) {
-            setFilename(media.filename);
-        }
-    }, [media]);
 
     // Handle file selection
     const handleFileSelect = (e) => {
@@ -50,7 +44,7 @@ export default function UpdateMedia() {
     const updateMutation = useMutation({
         mutationFn: async () => {
             const formData = new FormData();
-            if (filename !== media.filename) {
+            if (filename !== null && filename !== media.filename) {
                 formData.append('filename', filename);
             }
             if (selectedFile) {
@@ -152,7 +146,7 @@ export default function UpdateMedia() {
                         <p className={styles.helpText}>Update the display name of the file.</p>
                         <input
                             type="text"
-                            value={filename}
+                            value={filename ?? media?.filename ?? ''}
                             onChange={(e) => setFilename(e.target.value)}
                             placeholder="Enter filename"
                             className={styles.input}
@@ -197,7 +191,7 @@ export default function UpdateMedia() {
                     </Button>
                     <Button
                         onClick={() => updateMutation.mutate()}
-                        disabled={updateMutation.isPending || (!selectedFile && filename === media.filename)}
+                        disabled={updateMutation.isPending || (filename === null && !selectedFile)}
                     >
                         {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
                     </Button>

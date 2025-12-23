@@ -2,10 +2,22 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import clsx from 'clsx';
 import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
-import Button from './Button';
-import ThemeToggle from './ThemeToggle';
-import styles from './Navbar.module.scss';
-import mediaThumbs from '../pages/MediaThumb';
+import Button from '@/components/Button';
+import ThemeToggle from '@/components/ThemeToggle';
+import styles from '@/components/Navbar.module.scss';
+
+const NavLink = ({ to, children, mobile = false, isActive, onClick }) => (
+    <Link
+        to={to}
+        onClick={onClick}
+        className={clsx(
+            mobile ? styles.mobileLink : styles.navLink,
+            isActive && styles.active
+        )}
+    >
+        {children}
+    </Link>
+);
 
 export default function Navbar() {
     const navigate = useNavigate();
@@ -22,18 +34,6 @@ export default function Navbar() {
 
     const isActive = (path) => location.pathname === path;
 
-    const NavLink = ({ to, children, mobile = false }) => (
-        <Link
-            to={to}
-            onClick={() => mobile && setIsMobileMenuOpen(false)}
-            className={clsx(
-                mobile ? styles.mobileLink : styles.navLink,
-                isActive(to) && styles.active
-            )}
-        >
-            {children}
-        </Link>
-    );
 
     return (
         <nav className={styles.navbar}>
@@ -49,11 +49,11 @@ export default function Navbar() {
                         {/* Desktop Nav */}
                         <div className={styles.navDesktop}>
                             <div className={styles.navList}>
-                                <NavLink to="/">Home</NavLink>
-                                <NavLink to="/about">About</NavLink>
-                                {token && <NavLink to="/profile">Profile</NavLink>}
-                                {token && <NavLink to="/media">Media</NavLink>}
-                                {token && <NavLink to="/mediathumbs">Media Thumbs</NavLink>}
+                                <NavLink to="/" isActive={isActive('/')}>Home</NavLink>
+                                <NavLink to="/about" isActive={isActive('/about')}>About</NavLink>
+                                {token && <NavLink to="/profile" isActive={isActive('/profile')}>Profile</NavLink>}
+                                {token && <NavLink to="/media" isActive={isActive('/media')}>Media</NavLink>}
+                                {token && <NavLink to="/mediathumbs" isActive={isActive('/mediathumbs')}>Media Thumbs</NavLink>}
                             </div>
                         </div>
                     </div>
@@ -108,13 +108,13 @@ export default function Navbar() {
                             <span>Theme</span>
                             <ThemeToggle />
                         </div>
-                        <NavLink to="/" mobile>Home</NavLink>
-                        <NavLink to="/about" mobile>About</NavLink>
+                        <NavLink to="/" mobile isActive={isActive('/')} onClick={() => setIsMobileMenuOpen(false)}>Home</NavLink>
+                        <NavLink to="/about" mobile isActive={isActive('/about')} onClick={() => setIsMobileMenuOpen(false)}>About</NavLink>
                         {token && (
                             <>
-                                <NavLink to="/profile" mobile>Profile</NavLink>
-                                <NavLink to="/media" mobile>Media</NavLink>
-                                <NavLink to="/mediathumbs" mobile>Media Thumbs</NavLink>
+                                <NavLink to="/profile" mobile isActive={isActive('/profile')} onClick={() => setIsMobileMenuOpen(false)}>Profile</NavLink>
+                                <NavLink to="/media" mobile isActive={isActive('/media')} onClick={() => setIsMobileMenuOpen(false)}>Media</NavLink>
+                                <NavLink to="/mediathumbs" mobile isActive={isActive('/mediathumbs')} onClick={() => setIsMobileMenuOpen(false)}>Media Thumbs</NavLink>
                             </>
                         )}
                         <div className={styles.mobileAuth}>
