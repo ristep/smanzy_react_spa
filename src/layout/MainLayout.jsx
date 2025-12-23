@@ -1,12 +1,13 @@
 import { Outlet } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import styles from './MainLayout.module.scss';
 
 export default function MainLayout() {
     return (
-        <div className="min-h-screen flex flex-col">
+        <div className={styles.layout}>
             <Navbar />
-            <main className="flex-grow w-full pt-16">
+            <main className={styles.main}>
                 <Outlet />
             </main>
             <Footer />

@@ -1,13 +1,14 @@
 import { createBrowserRouter } from 'react-router-dom';
-import MainLayout from '../layout/MainLayout';
-import Home from '../pages/Home';
-import About from '../pages/About';
-import Login from '../pages/Login';
-import Register from '../pages/Register';
-import Profile from '../pages/Profile';
-import MediaManager from '../pages/MediaManager';
-import UpdateMedia from '../pages/UpdateMedia';
-import NotFound from '../pages/NotFound';
+import MainLayout from '@/layout/MainLayout';
+import Home from '@/pages/Home';
+import About from '@/pages/About';
+import Login from '@/pages/Login';
+import Register from '@/pages/Register';
+import Profile from '@/pages/Profile';
+import MediaManager from '@/pages/MediaManager';
+import UpdateMedia from '@/pages/UpdateMedia';
+import NotFound from '@/pages/NotFound';
+import MediaThumb from '@/pages/MediaThumb';
 
 const router = createBrowserRouter([
     {
@@ -42,6 +43,10 @@ const router = createBrowserRouter([
             {
                 path: 'media/edit/:id',
                 element: <UpdateMedia />,
+            },
+            {
+                path: 'mediathumbs',
+                element: <MediaThumb />,
             },
             {
                 path: '*',

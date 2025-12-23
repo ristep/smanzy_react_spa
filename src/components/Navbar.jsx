@@ -4,6 +4,8 @@ import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import Button from './Button';
 import ThemeToggle from './ThemeToggle';
+import styles from './Navbar.module.scss';
+import mediaThumbs from '../pages/MediaThumb';
 
 export default function Navbar() {
     const navigate = useNavigate();
@@ -20,14 +22,13 @@ export default function Navbar() {
 
     const isActive = (path) => location.pathname === path;
 
-    const NavLink = ({ to, children }) => (
+    const NavLink = ({ to, children, mobile = false }) => (
         <Link
             to={to}
+            onClick={() => mobile && setIsMobileMenuOpen(false)}
             className={clsx(
-                "px-3 py-2 rounded-md text-sm font-medium transition-all duration-200",
-                isActive(to)
-                    ? "text-blue-400 bg-blue-500/10 shadow-[inset_0_0_12px_rgba(59,130,246,0.1)]"
-                    : "text-slate-300 hover:text-white hover:bg-white/5"
+                mobile ? styles.mobileLink : styles.navLink,
+                isActive(to) && styles.active
             )}
         >
             {children}
@@ -35,34 +36,31 @@ export default function Navbar() {
     );
 
     return (
-        <nav className="fixed top-0 left-0 right-0 z-[100] border-b border-white/10 bg-slate-950/70 backdrop-blur-xl">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex items-center justify-between h-16">
+        <nav className={styles.navbar}>
+            <div className={styles.container}>
+                <div className={styles.content}>
                     {/* Logo */}
-                    <div className="flex items-center">
-                        <Link to="/" className="flex-shrink-0 flex items-center gap-2 group">
-                            <div className="size-9 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-blue-500/20 group-hover:shadow-blue-500/40 transition-all duration-300 group-hover:scale-105 group-hover:rotate-3">
-                                S
-                            </div>
-                            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-slate-400 tracking-tight">
-                                Smanzy
-                            </span>
+                    <div className={styles.leftSection}>
+                        <Link to="/" className={styles.logo}>
+                            <div className={styles.logoIcon}>S</div>
+                            <span className={styles.logoText}>Smanzy</span>
                         </Link>
 
                         {/* Desktop Nav */}
-                        <div className="hidden md:block">
-                            <div className="ml-10 flex items-baseline space-x-2">
+                        <div className={styles.navDesktop}>
+                            <div className={styles.navList}>
                                 <NavLink to="/">Home</NavLink>
                                 <NavLink to="/about">About</NavLink>
                                 {token && <NavLink to="/profile">Profile</NavLink>}
                                 {token && <NavLink to="/media">Media</NavLink>}
+                                {token && <NavLink to="/mediathumbs">Media Thumbs</NavLink>}
                             </div>
                         </div>
                     </div>
 
                     {/* Desktop Auth Buttons */}
-                    <div className="hidden md:block">
-                        <div className="ml-4 flex items-center gap-2 md:ml-6">
+                    <div className={styles.rightSection}>
+                        <div className={styles.authList}>
                             <ThemeToggle />
                             {token ? (
                                 <Button
@@ -73,11 +71,8 @@ export default function Navbar() {
                                     Logout
                                 </Button>
                             ) : (
-                                <div className="flex items-center space-x-4">
-                                    <Link
-                                        to="/login"
-                                        className="text-slate-300 hover:text-white text-sm font-medium transition-colors"
-                                    >
+                                <div className={styles.authList}>
+                                    <Link to="/login" className={styles.loginLink}>
                                         Login
                                     </Link>
                                     <Button
@@ -92,13 +87,13 @@ export default function Navbar() {
                     </div>
 
                     {/* Mobile menu button */}
-                    <div className="-mr-2 flex md:hidden">
+                    <div className={styles.mobileBtnWrapper}>
                         <button
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                            className="inline-flex items-center justify-center p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 focus:outline-none transition-colors"
+                            className={styles.mobileMenuBtn}
                         >
                             <span className="sr-only">Open main menu</span>
-                            {isMobileMenuOpen ? <X className="size-6" /> : <Menu className="size-6" />}
+                            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
                         </button>
                     </div>
                 </div>
@@ -106,48 +101,25 @@ export default function Navbar() {
 
             {/* Mobile menu */}
             {isMobileMenuOpen && (
-                <div className="md:hidden border-t border-white/5 bg-slate-950/95 backdrop-blur-xl animate-in fade-in slide-in-from-top-4 duration-200">
-                    <div className="px-4 pt-4 pb-6 space-y-2">
+                <div className={styles.mobile}>
+                    <div className={styles.mobileContent}>
                         {/* Theme Toggle in Mobile Menu */}
-                        <div className="flex items-center justify-between pb-2 mb-2 border-b border-white/5">
-                            <span className="text-sm font-medium text-slate-400">Theme</span>
+                        <div className={styles.mobileThemeToggle}>
+                            <span>Theme</span>
                             <ThemeToggle />
                         </div>
-                        <Link
-                            to="/"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                            className="block px-4 py-3 rounded-xl text-base font-medium text-white hover:bg-white/10 transition-colors"
-                        >
-                            Home
-                        </Link>
-                        <Link
-                            to="/about"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                            className="block px-4 py-3 rounded-xl text-base font-medium text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
-                        >
-                            About
-                        </Link>
+                        <NavLink to="/" mobile>Home</NavLink>
+                        <NavLink to="/about" mobile>About</NavLink>
                         {token && (
                             <>
-                                <Link
-                                    to="/profile"
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                    className="block px-4 py-3 rounded-xl text-base font-medium text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
-                                >
-                                    Profile
-                                </Link>
-                                <Link
-                                    to="/media"
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                    className="block px-4 py-3 rounded-xl text-base font-medium text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
-                                >
-                                    Media
-                                </Link>
+                                <NavLink to="/profile" mobile>Profile</NavLink>
+                                <NavLink to="/media" mobile>Media</NavLink>
+                                <NavLink to="/mediathumbs" mobile>Media Thumbs</NavLink>
                             </>
                         )}
-                        <div className="pt-4 border-t border-white/5 mt-4">
+                        <div className={styles.mobileAuth}>
                             {!token ? (
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className={styles.mobileAuthGrid}>
                                     <Button
                                         variant="secondary"
                                         onClick={() => { navigate('/login'); setIsMobileMenuOpen(false); }}

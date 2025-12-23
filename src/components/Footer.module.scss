@@ -1,0 +1,31 @@
+@use '../styles/abstracts/variables' as *;
+@use '../styles/abstracts/mixins' as *;
+
+.footer {
+    background-color: var(--color-background);
+    border-top: 1px solid var(--color-card-border);
+    margin-top: auto;
+    @include theme-transition;
+}
+
+.container {
+    max-width: $breakpoint-xl;
+    margin: 0 auto;
+    padding: $spacing-8 $spacing-4;
+
+    @include breakpoint($breakpoint-sm) {
+        padding-left: $spacing-6;
+        padding-right: $spacing-6;
+    }
+
+    @include breakpoint($breakpoint-lg) {
+        padding-left: $spacing-8;
+        padding-right: $spacing-8;
+    }
+}
+
+.text {
+    text-align: center;
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+}

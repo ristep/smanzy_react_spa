@@ -1,8 +1,10 @@
+import styles from './About.module.scss';
+
 export default function About() {
     return (
-        <div className="max-w-prose mx-auto py-10">
-            <h1 className="text-3xl font-bold text-gray-900 mb-6">About Smanzy</h1>
-            <div className="prose prose-blue text-gray-600 space-y-4">
+        <div className={styles.container}>
+            <h1 className={styles.title}>About Smanzy</h1>
+            <div className={styles.content}>
                 <p>
                     Smanzy is a demonstration of modern web architecture, combining the performance
                     of a Go backend with the interactivity of a React frontend.
@@ -10,9 +12,9 @@ export default function About() {
                 <p>
                     <strong>Tech Stack:</strong>
                 </p>
-                <ul className="list-disc pl-5">
+                <ul className={styles.list}>
                     <li>Backend: Go (Golang), Gin, GORM, PostgreSQL</li>
-                    <li>Frontend: React, Vite, Tailwind CSS, TanStack Query</li>
+                    <li>Frontend: React, Vite, SCSS Modules, TanStack Query</li>
                     <li>Authentication: JWT (JSON Web Tokens)</li>
                 </ul>
             </div>

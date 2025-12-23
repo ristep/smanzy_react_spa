@@ -1,15 +1,15 @@
 import { useState, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import api from '../services/api';
-import Button from '../components/Button';
-import IconButton from '../components/IconButton';
-import Panel from '../components/Panel';
+import api from '@/services/api';
+import Button from '@/components/Button';
+import IconButton from '@/components/IconButton';
+import Panel from '@/components/Panel';
 import { Edit, Download, Trash2, File, FileText, FileArchive, Image, Video, FileMusic } from 'lucide-react';
-import styles from './MediaManager.module.scss';
+import styles from './index.module.scss';
 import clsx from 'clsx';
 
-export default function MediaManager() {
+export default function MediaThumb() {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const queryClient = useQueryClient();
@@ -220,7 +220,7 @@ export default function MediaManager() {
         <div className={styles.container}>
             {/* Header */}
             <div className={styles.header}>
-                <h1 className={styles.title}>Media Manager</h1>
+                <h1 className={styles.title}>Media Manager with thumbnails</h1>
                 <p className={styles.subtitle}>Upload, manage, and organize your media files</p>
             </div>
             {/* Upload Section */}

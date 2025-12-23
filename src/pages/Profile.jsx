@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../services/api';
 import Button from '../components/Button';
+import styles from './Profile.module.scss';
+import clsx from 'clsx';
 
 export default function Profile() {
     const queryClient = useQueryClient();
@@ -78,43 +80,43 @@ export default function Profile() {
         }
     };
 
-    if (isPending) return <div className="text-center py-10 text-text-secondary">Loading profile...</div>;
+    if (isPending) return <div className={styles.loading}>Loading profile...</div>;
 
     if (error) return (
-        <div className="text-center py-10 text-red-600 dark:text-red-400">
+        <div className={styles.error}>
             Error loading profile: {error.message}
         </div>
     );
 
     const user = data.data;
 
-    const ProfileField = ({ label, name, value, type = "text" }) => (
-        <div className="bg-background-secondary px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 border-b border-border last:border-0">
-            <dt className="text-sm font-medium text-text-muted">{label}</dt>
-            <dd className="mt-1 text-sm text-text-primary sm:mt-0 sm:col-span-2">
+    const ProfileField = ({ label, name, value, type = "text", highlight = false }) => (
+        <div className={clsx(styles.field, highlight && styles.alt)}>
+            <dt className={styles.label}>{label}</dt>
+            <dd className={styles.value}>
                 {isEditing ? (
                     <input
                         type={type}
                         name={name}
                         value={value}
                         onChange={handleInputChange}
-                        className="max-w-lg block w-full shadow-sm focus:ring-accent focus:border-accent sm:max-w-xs sm:text-sm border-input-border rounded-md py-2 px-3 border bg-input text-text-primary"
+                        className={styles.input}
                     />
                 ) : (
-                    value || <span className="text-text-muted italic">Not set</span>
+                    value || <span className={styles.italic}>Not set</span>
                 )}
             </dd>
         </div>
     );
 
     return (
-        <div className="max-w-2xl mx-auto bg-card shadow-xl overflow-hidden sm:rounded-xl border border-card-border my-8">
-            <div className="px-4 py-5 sm:px-6 flex justify-between items-center bg-background-secondary">
+        <div className={styles.profileCard}>
+            <div className={styles.header}>
                 <div>
-                    <h3 className="text-xl leading-6 font-bold text-text-primary">User Profile</h3>
-                    <p className="mt-1 max-w-2xl text-sm text-text-secondary">Personal details and application role.</p>
+                    <h3 className={styles.title}>User Profile</h3>
+                    <p className={styles.subtitle}>Personal details and application role.</p>
                 </div>
-                <div className="flex space-x-3">
+                <div className={styles.actions}>
                     {!isEditing ? (
                         <Button
                             onClick={() => setIsEditing(true)}
@@ -139,33 +141,35 @@ export default function Profile() {
                     )}
                 </div>
             </div>
-            <div className="border-t border-border">
+            <div className={styles.content}>
                 <dl>
-                    <ProfileField label="Full name" name="name" value={formData.name} />
-                    <div className="bg-card px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 border-b border-border">
-                        <dt className="text-sm font-medium text-text-muted">Email address</dt>
-                        <dd className="mt-1 text-sm text-text-primary sm:mt-0 sm:col-span-2">{user.email}</dd>
+                    <ProfileField label="Full name" name="name" value={formData.name} highlight />
+                    <div className={styles.field}>
+                        <dt className={styles.label}>Email address</dt>
+                        <dd className={styles.value}>{user.email}</dd>
                     </div>
-                    <ProfileField label="Telephone" name="tel" value={formData.tel} />
+                    <ProfileField label="Telephone" name="tel" value={formData.tel} highlight />
                     <ProfileField label="Age" name="age" value={formData.age} type="number" />
-                    <ProfileField label="Gender" name="gender" value={formData.gender} />
+                    <ProfileField label="Gender" name="gender" value={formData.gender} highlight />
                     <ProfileField label="Address" name="address" value={formData.address} />
-                    <ProfileField label="City" name="city" value={formData.city} />
+                    <ProfileField label="City" name="city" value={formData.city} highlight />
                     <ProfileField label="Country" name="country" value={formData.country} />
 
-                    <div className="bg-card px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 border-b border-border">
-                        <dt className="text-sm font-medium text-text-muted">Roles</dt>
-                        <dd className="mt-1 text-sm text-text-primary sm:mt-0 sm:col-span-2">
-                            {user.roles && user.roles.map(r => (
-                                <span key={r.id} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent/10 text-accent mr-2 capitalize">
-                                    {r.name}
-                                </span>
-                            ))}
+                    <div className={clsx(styles.field, styles.alt)}>
+                        <dt className={styles.label}>Roles</dt>
+                        <dd className={styles.value}>
+                            <div className={styles.rolesList}>
+                                {user.roles && user.roles.map(r => (
+                                    <span key={r.id} className={styles.rolePill}>
+                                        {r.name}
+                                    </span>
+                                ))}
+                            </div>
                         </dd>
                     </div>
-                    <div className="bg-background-secondary px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                        <dt className="text-sm font-medium text-text-muted">Member since</dt>
-                        <dd className="mt-1 text-sm text-text-primary sm:mt-0 sm:col-span-2">
+                    <div className={styles.field}>
+                        <dt className={styles.label}>Member since</dt>
+                        <dd className={styles.value}>
                             {new Date(user.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
                         </dd>
                     </div>
