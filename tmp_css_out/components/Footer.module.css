@@ -1,0 +1,30 @@
+.footer {
+  background-color: var(--color-background);
+  border-top: 1px solid var(--color-card-border);
+  margin-top: auto;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+@media (min-width: 640px) {
+  .container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+@media (min-width: 1024px) {
+  .container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+.text {
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}

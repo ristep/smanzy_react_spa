@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
+    "check:scss": "node scripts/check-scss.cjs",
     "preview": "vite preview"
   },
   "dependencies": {
