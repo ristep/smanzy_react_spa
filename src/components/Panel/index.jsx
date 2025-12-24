@@ -1,6 +1,7 @@
 import React from 'react';
-import styles from './Panel.module.scss';
 import clsx from 'clsx';
+
+import styles from './index.module.scss';
 
 const Panel = ({ children, className = "" }) => {
     return (

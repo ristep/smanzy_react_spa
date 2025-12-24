@@ -1,10 +1,11 @@
+import styles from './index.module.scss';
+
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import clsx from 'clsx';
 import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import Button from '@/components/Button';
 import ThemeToggle from '@/components/ThemeToggle';
-import styles from '@/components/Navbar.module.scss';
 
 const NavLink = ({ to, children, mobile = false, isActive, onClick }) => (
     <Link
@@ -42,8 +43,7 @@ export default function Navbar() {
                     {/* Logo */}
                     <div className={styles.leftSection}>
                         <Link to="/" className={styles.logo}>
-                            <div className={styles.logoIcon}>S</div>
-                            <span className={styles.logoText}>Smanzy</span>
+                            <div className={styles.logoIcon}><img src="src/assets/smanzy_logo_180.png" alt="Logo" /></div>
                         </Link>
 
                         {/* Desktop Nav */}

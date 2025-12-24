@@ -1,5 +1,5 @@
-@use '../styles/abstracts/variables' as *;
-@use '../styles/abstracts/mixins' as *;
+@use '@/styles/abstracts/variables' as *;
+@use '@/styles/abstracts/mixins' as *;
 
 .navbar {
     position: fixed;
@@ -64,7 +64,7 @@
     width: 2.25rem;
     height: 2.25rem;
     border-radius: $radius-xl;
-    background: linear-gradient(to bottom right, #3b82f6, #4f46e5);
+    background: rgba(52, 26, 26, 0.05);
     display: flex;
     align-items: center;
     justify-content: center;

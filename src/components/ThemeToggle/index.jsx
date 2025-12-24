@@ -1,7 +1,9 @@
+import React from 'react';
 import { Sun, Moon, Coffee } from 'lucide-react';
-import { useTheme } from '../context/ThemeContext';
-import styles from './ThemeToggle.module.scss';
+import { useTheme } from '@/context/ThemeContext';
 import clsx from 'clsx';
+
+import styles from './index.module.scss';
 
 const ThemeToggle = () => {
     const { theme, toggleTheme } = useTheme();

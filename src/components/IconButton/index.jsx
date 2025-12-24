@@ -1,4 +1,4 @@
-import styles from './IconButton.module.scss';
+import styles from './index.module.scss';
 import clsx from 'clsx';
 
 const IconButton = ({ onClick, disabled, title, children, className = "" }) => {

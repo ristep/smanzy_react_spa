@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './Button.module.scss';
+import styles from './index.module.scss';
 import clsx from 'clsx';
 
 export default function Button({

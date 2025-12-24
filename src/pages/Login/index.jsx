@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { Mail, Lock, Loader2, LogIn } from 'lucide-react';
-import api from '../services/api';
-import Button from '../components/Button';
-import styles from './Login.module.scss';
+import api from '@/services/api';
+import Button from '@/components/Button';
+
+import styles from './index.module.scss';
 
 export default function Login() {
     const [email, setEmail] = useState('');
