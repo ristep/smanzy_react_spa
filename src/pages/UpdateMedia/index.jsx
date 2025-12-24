@@ -3,7 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/services/api';
 import Button from '@/components/Button';
-import styles from '@/pages/UpdateMedia.module.scss';
+import styles from './index.module.scss';
+import clsx from 'clsx';
 
 export default function UpdateMedia() {
     const { id } = useParams();

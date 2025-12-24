@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { User, Mail, Lock, Loader2, UserPlus } from 'lucide-react';
-import api from '../services/api';
-import Button from '../components/Button';
-import styles from './Register.module.scss';
+import api from '@/services/api';
+import Button from '@/components/Button';
+import styles from './index.module.scss';
 
 export default function Register() {
     const [formData, setFormData] = useState({

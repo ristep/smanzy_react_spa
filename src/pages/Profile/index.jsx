@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/services/api';
 import Button from '@/components/Button';
-import styles from './Profile.module.scss';
+import styles from './index.module.scss';
 import clsx from 'clsx';
 
 const ProfileField = ({ label, name, value, type = "text", highlight = false, isEditing, onChange }) => (
