@@ -53,6 +53,7 @@ export default function Navbar() {
                                 <NavLink to="/about" isActive={isActive('/about')}>About</NavLink>
                                 {token && <NavLink to="/media" isActive={isActive('/media')}>Media List</NavLink>}
                                 {token && <NavLink to="/mediacards" isActive={isActive('/mediacards')}>Media Cards</NavLink>}
+                                {token && <NavLink to="/albums" isActive={isActive('/albums')}>Albums</NavLink>}
                                 {token && <NavLink to="/profile" isActive={isActive('/profile')}>Profile</NavLink>}
                             </div>
                         </div>
@@ -114,6 +115,7 @@ export default function Navbar() {
                             <>
                                 <NavLink to="/profile" mobile isActive={isActive('/profile')} onClick={() => setIsMobileMenuOpen(false)}>Profile</NavLink>
                                 <NavLink to="/media" mobile isActive={isActive('/media')} onClick={() => setIsMobileMenuOpen(false)}>Media</NavLink>
+                                <NavLink to="/albums" mobile isActive={isActive('/albums')} onClick={() => setIsMobileMenuOpen(false)}>Albums</NavLink>
                                 <NavLink to="/mediathumbs" mobile isActive={isActive('/mediathumbs')} onClick={() => setIsMobileMenuOpen(false)}>Media Thumbs</NavLink>
                             </>
                         )}
