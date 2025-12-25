@@ -39,6 +39,27 @@
     margin-bottom: $spacing-4;
 }
 
+/* Grid Container */
+.gridContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: $spacing-4;
+
+    @include breakpoint($breakpoint-sm) {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: $spacing-5;
+    }
+
+    @include breakpoint($breakpoint-md) {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: $spacing-6;
+    }
+
+    @include breakpoint($breakpoint-lg) {
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    }
+}
+
 /* Upload Section */
 .uploadSection {
     display: flex;

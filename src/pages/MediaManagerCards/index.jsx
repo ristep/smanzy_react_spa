@@ -6,7 +6,6 @@ import Button from '@/components/Button';
 import Panel from '@/components/Panel';
 import MediaCard from '@/components/MediaCard';
 import styles from './index.module.scss';
-import clsx from 'clsx';
 
 export default function MediaManagerCards() {
     const navigate = useNavigate();
@@ -17,7 +16,7 @@ export default function MediaManagerCards() {
     const fileInputRef = useRef(null);
 
     const page = parseInt(searchParams.get('page')) || 1;
-    const limit = 5; // Number of items per page
+    const limit = 4; // Number of items per page
 
     // Fetch media list
     const { isPending, error, data } = useQuery({
@@ -253,32 +252,19 @@ export default function MediaManagerCards() {
                         <p className={styles.emptySubtext}>Upload a file or check other pages</p>
                     </div>
                 ) : (
-                    <div className={styles.tableWrapper}>
-                        <table className={styles.table}>
-                            <thead className={styles.thead}>
-                                <tr>
-                                    <th className={styles.th}>Thumbnail</th>
-                                    <th className={styles.th}>File Name</th>
-                                    <th className={styles.th}>Type</th>
-                                    <th className={styles.th}>Size</th>
-                                    <th className={styles.th}>Uploaded</th>
-                                    <th className={clsx(styles.th, styles.right)}>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className={styles.tbody}>
-                                {mediaList.map((media) => (
-                                    <MediaCard
-                                        key={media.id}
-                                        media={media}
-                                        onEdit={handleEdit}
-                                        onDelete={handleDelete}
-                                        onDownload={handleDownload}
-                                        canManage={canManage(media)}
-                                        canView={canView(media)}
-                                    />
-                                ))}
-                            </tbody>
-                        </table>
+                    <div className={styles.gridContainer}>
+                        {mediaList.map((media) => (
+                            <MediaCard
+                                key={media.id}
+                                media={media}
+                                onEdit={handleEdit}
+                                onDelete={handleDelete}
+                                onDownload={handleDownload}
+                                canManage={canManage(media)}
+                                canView={canView(media)}
+                                variant="grid"
+                            />
+                        ))}
                     </div>
                 )}
 

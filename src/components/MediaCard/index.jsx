@@ -11,6 +11,7 @@ export default function MediaCard({
     onDownload,
     canManage = false,
     canView = true,
+    variant = 'grid', // 'grid' or 'table'
 }) {
     const [showPreview, setShowPreview] = useState(false);
     const formatFileSize = (bytes) => {
@@ -52,66 +53,137 @@ export default function MediaCard({
 
     return (
         <>
-            <tr className={styles.tr}>
-                <td className={styles.td}>
-                    <div 
-                        className={clsx(styles.thumbnailWrapper, isImageFile(media.mime_type) && styles.clickable)}
-                        onClick={() => isImageFile(media.mime_type) && setShowPreview(true)}
-                    >
-                        {isImageFile(media.mime_type) ? (
-                            <img
-                                src={getThumbnailUrl()}
-                                alt={media.filename}
-                                className={styles.thumbnail}
-                            />
-                        ) : (
-                            <div className={styles.thumbnailPlaceholder}>
+            {variant === 'table' ? (
+                // Table row variant
+                <tr className={styles.tr}>
+                    <td className={styles.td}>
+                        <div 
+                            className={clsx(styles.thumbnailWrapper, isImageFile(media.mime_type) && styles.clickable)}
+                            onClick={() => isImageFile(media.mime_type) && setShowPreview(true)}
+                        >
+                            {isImageFile(media.mime_type) ? (
+                                <img
+                                    src={getThumbnailUrl()}
+                                    alt={media.filename}
+                                    className={styles.thumbnail}
+                                />
+                            ) : (
+                                <div className={styles.thumbnailPlaceholder}>
+                                    {getFileIcon(media.mime_type)}
+                                </div>
+                            )}
+                        </div>
+                    </td>
+                    <td className={styles.td}>
+                        <div className={styles.fileName}>{media.filename}</div>
+                        <div className={styles.fileId}>ID: {media.id}</div>
+                    </td>
+                    <td className={styles.td}>
+                        <span className={styles.typeBadge}>
+                            {getFileIcon(media.mime_type)}
+                        </span>
+                    </td>
+                    <td className={clsx(styles.td, styles.textSecondary)}>
+                        {formatFileSize(media.size)}
+                    </td>
+                    <td className={clsx(styles.td, styles.textSecondary)}>
+                        {formatDate(media.created_at)}
+                    </td>
+                    <td className={clsx(styles.td, styles.right)}>
+                        <div className="flex justify-end gap-2">
+                            <IconButton
+                                onClick={() => onDownload(media)}
+                                disabled={!canView}
+                                title="Download"
+                            >
+                                <Download />
+                            </IconButton>
+                            <IconButton
+                                onClick={() => onEdit(media)}
+                                disabled={!canManage}
+                                title="Edit"
+                            >
+                                <Edit />
+                            </IconButton>
+                            <IconButton
+                                onClick={() => onDelete(media)}
+                                disabled={!canManage}
+                                title="Delete"
+                            >
+                                <Trash2 />
+                            </IconButton>
+                        </div>
+                    </td>
+                </tr>
+            ) : (
+                // Grid card variant
+                <div className={styles.card}>
+                    <div className={styles.cardThumbnail}>
+                        <div 
+                            className={clsx(styles.largeThumbWrapper, isImageFile(media.mime_type) && styles.clickable)}
+                            onClick={() => isImageFile(media.mime_type) && setShowPreview(true)}
+                        >
+                            {isImageFile(media.mime_type) ? (
+                                <img
+                                    src={getThumbnailUrl()}
+                                    alt={media.filename}
+                                    className={styles.largeThumb}
+                                />
+                            ) : (
+                                <div className={styles.largeThumbPlaceholder}>
+                                    {getFileIcon(media.mime_type)}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className={styles.cardContent}>
+                        <div className={styles.cardHeader}>
+                            <h3 className={styles.cardTitle} title={media.filename}>
+                                {media.filename}
+                            </h3>
+                            <span className={styles.cardBadge}>
                                 {getFileIcon(media.mime_type)}
+                            </span>
+                        </div>
+
+                        <div className={styles.cardMeta}>
+                            <div className={styles.metaItem}>
+                                <span className={styles.metaLabel}>Size:</span>
+                                <span className={styles.metaValue}>{formatFileSize(media.size)}</span>
                             </div>
-                        )}
+                            <div className={styles.metaItem}>
+                                <span className={styles.metaLabel}>Uploaded:</span>
+                                <span className={styles.metaValue}>{formatDate(media.created_at)}</span>
+                            </div>
+                        </div>
+
+                        <div className={styles.cardActions}>
+                            <IconButton
+                                onClick={() => onDownload(media)}
+                                disabled={!canView}
+                                title="Download"
+                            >
+                                <Download size={18} />
+                            </IconButton>
+                            <IconButton
+                                onClick={() => onEdit(media)}
+                                disabled={!canManage}
+                                title="Edit"
+                            >
+                                <Edit size={18} />
+                            </IconButton>
+                            <IconButton
+                                onClick={() => onDelete(media)}
+                                disabled={!canManage}
+                                title="Delete"
+                            >
+                                <Trash2 size={18} />
+                            </IconButton>
+                        </div>
                     </div>
-                </td>
-                <td className={styles.td}>
-                    <div className={styles.fileName}>{media.filename}</div>
-                    <div className={styles.fileId}>ID: {media.id}</div>
-                </td>
-                <td className={styles.td}>
-                    <span className={styles.typeBadge}>
-                        {getFileIcon(media.mime_type)}
-                    </span>
-                </td>
-                <td className={clsx(styles.td, styles.textSecondary)}>
-                    {formatFileSize(media.size)}
-                </td>
-                <td className={clsx(styles.td, styles.textSecondary)}>
-                    {formatDate(media.created_at)}
-                </td>
-                <td className={clsx(styles.td, styles.right)}>
-                    <div className="flex justify-end gap-2">
-                        <IconButton
-                            onClick={() => onDownload(media)}
-                            disabled={!canView}
-                            title="Download"
-                        >
-                            <Download />
-                        </IconButton>
-                        <IconButton
-                            onClick={() => onEdit(media)}
-                            disabled={!canManage}
-                            title="Edit"
-                        >
-                            <Edit />
-                        </IconButton>
-                        <IconButton
-                            onClick={() => onDelete(media)}
-                            disabled={!canManage}
-                            title="Delete"
-                        >
-                            <Trash2 />
-                        </IconButton>
-                    </div>
-                </td>
-            </tr>
+                </div>
+            )}
 
             {/* Image Preview Overlay */}
             {showPreview && isImageFile(media.mime_type) && (

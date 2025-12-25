@@ -51,7 +51,7 @@ export default function Navbar() {
                             <div className={styles.navList}>
                                 <NavLink to="/" isActive={isActive('/')}>Home</NavLink>
                                 <NavLink to="/about" isActive={isActive('/about')}>About</NavLink>
-                                {token && <NavLink to="/media" isActive={isActive('/media')}>Media</NavLink>}
+                                {token && <NavLink to="/media" isActive={isActive('/media')}>Media List</NavLink>}
                                 {token && <NavLink to="/mediacards" isActive={isActive('/mediacards')}>Media Cards</NavLink>}
                                 {token && <NavLink to="/profile" isActive={isActive('/profile')}>Profile</NavLink>}
                             </div>
