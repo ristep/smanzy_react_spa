@@ -30,7 +30,7 @@ export default function Navbar() {
     const handleLogout = () => {
         setIsMobileMenuOpen(false);
         localStorage.removeItem('token');
-        navigate('/login');
+        navigate('/');
     };
 
     const isActive = (path) => location.pathname === path;

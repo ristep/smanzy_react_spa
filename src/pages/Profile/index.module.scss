@@ -103,7 +103,26 @@
     }
 
     @include breakpoint($breakpoint-sm) {
-        max-width: $spacing-24; // approx 16rem
+        max-width: 100%;
+    }
+}
+
+// Input size variants
+.inputSm {
+    @include breakpoint($breakpoint-sm) {
+        max-width: 8rem; // approx 128px for small fields (age)
+    }
+}
+
+.inputMd {
+    @include breakpoint($breakpoint-sm) {
+        max-width: 16rem; // approx 256px for medium fields (tel, city, gender, country)
+    }
+}
+
+.inputLg {
+    @include breakpoint($breakpoint-sm) {
+        max-width: 100%; // full width for large fields (name, address)
     }
 }
 

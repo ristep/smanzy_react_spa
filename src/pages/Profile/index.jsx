@@ -5,7 +5,7 @@ import Button from '@/components/Button';
 import styles from './index.module.scss';
 import clsx from 'clsx';
 
-const ProfileField = ({ label, name, value, type = "text", highlight = false, isEditing, onChange }) => (
+const ProfileField = ({ label, name, value, type = "text", highlight = false, isEditing, onChange, inputSize = 'default' }) => (
     <div className={clsx(styles.field, highlight && styles.alt)}>
         <dt className={styles.label}>{label}</dt>
         <dd className={styles.value}>
@@ -15,7 +15,7 @@ const ProfileField = ({ label, name, value, type = "text", highlight = false, is
                     name={name}
                     value={value}
                     onChange={onChange}
-                    className={styles.input}
+                    className={clsx(styles.input, styles[`input${inputSize}`])}
                 />
             ) : (
                 value || <span className={styles.italic}>Not set</span>
@@ -131,17 +131,17 @@ export default function Profile() {
             </div>
             <div className={styles.content}>
                 <dl>
-                    <ProfileField label="Full name" name="name" value={currentFormData.name} highlight isEditing={isEditing} onChange={handleInputChange} />
+                    <ProfileField label="Full name" name="name" value={currentFormData.name} highlight isEditing={isEditing} onChange={handleInputChange} inputSize="Lg" />
                     <div className={styles.field}>
                         <dt className={styles.label}>Email address</dt>
                         <dd className={styles.value}>{user.email}</dd>
                     </div>
-                    <ProfileField label="Telephone" name="tel" value={currentFormData.tel} highlight isEditing={isEditing} onChange={handleInputChange} />
-                    <ProfileField label="Age" name="age" value={currentFormData.age} type="number" isEditing={isEditing} onChange={handleInputChange} />
-                    <ProfileField label="Gender" name="gender" value={currentFormData.gender} highlight isEditing={isEditing} onChange={handleInputChange} />
-                    <ProfileField label="Address" name="address" value={currentFormData.address} isEditing={isEditing} onChange={handleInputChange} />
-                    <ProfileField label="City" name="city" value={currentFormData.city} highlight isEditing={isEditing} onChange={handleInputChange} />
-                    <ProfileField label="Country" name="country" value={currentFormData.country} isEditing={isEditing} onChange={handleInputChange} />
+                    <ProfileField label="Telephone" name="tel" value={currentFormData.tel} highlight isEditing={isEditing} onChange={handleInputChange} inputSize="Md" />
+                    <ProfileField label="Age" name="age" value={currentFormData.age} type="number" isEditing={isEditing} onChange={handleInputChange} inputSize="Sm" />
+                    <ProfileField label="Gender" name="gender" value={currentFormData.gender} highlight isEditing={isEditing} onChange={handleInputChange} inputSize="Md" />
+                    <ProfileField label="Address" name="address" value={currentFormData.address} isEditing={isEditing} onChange={handleInputChange} inputSize="Lg" />
+                    <ProfileField label="City" name="city" value={currentFormData.city} highlight isEditing={isEditing} onChange={handleInputChange} inputSize="Md" />
+                    <ProfileField label="Country" name="country" value={currentFormData.country} isEditing={isEditing} onChange={handleInputChange} inputSize="Md" />
 
                     <div className={clsx(styles.field, styles.alt)}>
                         <dt className={styles.label}>Roles</dt>
