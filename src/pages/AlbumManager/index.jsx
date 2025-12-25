@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, Trash2, Edit, X } from 'lucide-react';
+import { Plus, Trash2, Edit, X, Save, File } from 'lucide-react';
 import api from '@/services/api';
 import Button from '@/components/Button';
 import Panel from '@/components/Panel';
+import Modal from '@/components/Modal';
 import styles from './index.module.scss';
 import clsx from 'clsx';
 
@@ -11,7 +12,10 @@ export default function AlbumManager() {
     const queryClient = useQueryClient();
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [formData, setFormData] = useState({ title: '', description: '' });
-    const [selectedAlbum, setSelectedAlbum] = useState(null);
+    const [managingAlbumId, setManagingAlbumId] = useState(null);
+    const [editFormData, setEditFormData] = useState({ title: '', description: '' });
+    const [isEditing, setIsEditing] = useState(false);
+    const [activeTab, setActiveTab] = useState('media'); // 'details' or 'media'
     const [showAddMediaForm, setShowAddMediaForm] = useState(false);
     const [mediaSearch, setMediaSearch] = useState('');
 
@@ -36,6 +40,9 @@ export default function AlbumManager() {
         m.filename.toLowerCase().includes(mediaSearch.toLowerCase())
     );
 
+    // Derive the album being managed from the latest data
+    const managingAlbum = albums.find(a => a.id === managingAlbumId);
+
     // Create album mutation
     const createAlbumMutation = useMutation({
         mutationFn: (newAlbum) => api.post('/albums', newAlbum),
@@ -49,12 +56,24 @@ export default function AlbumManager() {
         },
     });
 
+    // Update album mutation
+    const updateAlbumMutation = useMutation({
+        mutationFn: ({ albumId, data }) => api.put(`/albums/${albumId}`, data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['albums'] });
+            setIsEditing(false);
+        },
+        onError: (err) => {
+            alert('Failed to update album: ' + (err.response?.data?.error || err.message));
+        },
+    });
+
     // Delete album mutation
     const deleteAlbumMutation = useMutation({
         mutationFn: (albumId) => api.delete(`/albums/${albumId}`),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['albums'] });
-            setSelectedAlbum(null);
+            setManagingAlbumId(null);
         },
         onError: (err) => {
             alert('Failed to delete album: ' + (err.response?.data?.error || err.message));
@@ -99,6 +118,54 @@ export default function AlbumManager() {
     const handleFormChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleOpenManageModal = (album) => {
+        setManagingAlbumId(album.id);
+        setEditFormData({ title: album.title, description: album.description || '' });
+        setIsEditing(false);
+        setActiveTab('media');
+        setShowAddMediaForm(false);
+        setMediaSearch('');
+    };
+
+    const getThumbnailUrl = (path) => {
+        if (!path) return '';
+        const baseUrl = import.meta.env.VITE_API_BASE_URL.replace('/api', '');
+        return baseUrl + path;
+    };
+
+    const isMediaInAlbum = (mediaId) => {
+        return managingAlbum?.media_files?.some(m => m.id === mediaId);
+    };
+
+    const handleCloseManageModal = () => {
+        setManagingAlbumId(null);
+        setIsEditing(false);
+        setShowAddMediaForm(false);
+        setMediaSearch('');
+    };
+
+    const handleEditFormChange = (e) => {
+        const { name, value } = e.target;
+        setEditFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSaveAlbum = (e) => {
+        e.preventDefault();
+        if (!editFormData.title.trim()) {
+            alert('Album title is required');
+            return;
+        }
+        updateAlbumMutation.mutate({
+            albumId: managingAlbum.id,
+            data: editFormData
+        });
+    };
+
+    const handleCancelEdit = () => {
+        setEditFormData({ title: managingAlbum.title, description: managingAlbum.description || '' });
+        setIsEditing(false);
     };
 
     if (albumsPending) return <div className={styles.container}><p>Loading albums...</p></div>;
@@ -165,13 +232,18 @@ export default function AlbumManager() {
 
                                 <div className={styles.albumActions}>
                                     <Button
-                                        onClick={() => setSelectedAlbum(selectedAlbum?.id === album.id ? null : album)}
+                                        onClick={() => handleOpenManageModal(album)}
                                         variant="secondary"
                                     >
-                                        {selectedAlbum?.id === album.id ? 'Hide Details' : 'View'}
+                                        <Edit size={18} />
+                                        Manage
                                     </Button>
                                     <Button
-                                        onClick={() => deleteAlbumMutation.mutate(album.id)}
+                                        onClick={() => {
+                                            if (confirm('Are you sure you want to delete this album?')) {
+                                                deleteAlbumMutation.mutate(album.id);
+                                            }
+                                        }}
                                         disabled={deleteAlbumMutation.isPending}
                                         variant="danger"
                                     >
@@ -179,84 +251,204 @@ export default function AlbumManager() {
                                     </Button>
                                 </div>
 
-                                {selectedAlbum?.id === album.id && (
-                                    <div className={styles.albumDetails}>
-                                        <div className={styles.mediaSection}>
-                                            <div className={styles.mediaSectionHeader}>
-                                                <h4>Media Files</h4>
-                                                <Button
-                                                    onClick={() => setShowAddMediaForm(!showAddMediaForm)}
-                                                    size="small"
-                                                >
-                                                    {showAddMediaForm ? 'Cancel' : <Plus size={16} />}
-                                                </Button>
-                                            </div>
 
-                                            {showAddMediaForm && (
-                                                <div className={styles.addMediaForm}>
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Search media files..."
-                                                        value={mediaSearch}
-                                                        onChange={(e) => setMediaSearch(e.target.value)}
-                                                        className={styles.searchInput}
-                                                    />
-                                                    <div className={styles.mediaList}>
-                                                        {filteredMedia.length === 0 ? (
-                                                            <p>No media files found</p>
-                                                        ) : (
-                                                            filteredMedia.map(media => (
-                                                                <div key={media.id} className={styles.mediaItem}>
-                                                                    <span>{media.filename}</span>
-                                                                    <Button
-                                                                        onClick={() => addMediaMutation.mutate({
-                                                                            albumId: album.id,
-                                                                            mediaId: media.id
-                                                                        })}
-                                                                        size="small"
-                                                                        disabled={addMediaMutation.isPending}
-                                                                    >
-                                                                        Add
-                                                                    </Button>
-                                                                </div>
-                                                            ))
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            )}
-
-                                            {album.media_files && album.media_files.length > 0 ? (
-                                                <div className={styles.mediaGrid}>
-                                                    {album.media_files.map(media => (
-                                                        <div key={media.id} className={styles.mediaItemCard}>
-                                                            <div className={styles.mediaName}>
-                                                                {media.filename}
-                                                            </div>
-                                                            <Button
-                                                                onClick={() => removeMediaMutation.mutate({
-                                                                    albumId: album.id,
-                                                                    mediaId: media.id
-                                                                })}
-                                                                size="small"
-                                                                disabled={removeMediaMutation.isPending}
-                                                                variant="danger"
-                                                            >
-                                                                <X size={16} />
-                                                            </Button>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            ) : (
-                                                <p className={styles.emptyMedia}>No media in this album</p>
-                                            )}
-                                        </div>
-                                    </div>
-                                )}
                             </div>
                         ))}
                     </div>
                 )}
             </Panel>
+
+            {/* Manage Album Modal */}
+            <Modal
+                isOpen={!!managingAlbumId}
+                onClose={handleCloseManageModal}
+                title={managingAlbum?.title || 'Manage Album'}
+                size="large"
+            >
+                {managingAlbum && (
+                    <div className={styles.modalContent}>
+                        <div className={styles.tabHeader}>
+                            <Button
+                                variant="secondary"
+                                onClick={() => setActiveTab('media')}
+                            >
+                                Media Content
+                            </Button>
+                            <Button
+                                variant="secondary"
+                                onClick={() => setActiveTab('details')}
+                            >
+                                Settings
+                            </Button>
+                        </div>
+
+                        {activeTab === 'details' ? (
+                            <div className={styles.section}>
+                                <div className={styles.sectionHeader}>
+                                    <h3>Album Settings</h3>
+                                    {!isEditing && (
+                                        <Button
+                                            onClick={() => setIsEditing(true)}
+                                            variant="primary"
+                                        >
+                                            <Edit size={16} />
+                                            Edit Details
+                                        </Button>
+                                    )}
+                                </div>
+
+                                {isEditing ? (
+                                    <form onSubmit={handleSaveAlbum} className={styles.editForm}>
+                                        <div className={styles.formGroup}>
+                                            <label>Album Title</label>
+                                            <input
+                                                type="text"
+                                                name="title"
+                                                value={editFormData.title}
+                                                onChange={handleEditFormChange}
+                                                placeholder="Enter album title"
+                                                required
+                                            />
+                                        </div>
+                                        <div className={styles.formGroup}>
+                                            <label>Description</label>
+                                            <textarea
+                                                name="description"
+                                                value={editFormData.description}
+                                                onChange={handleEditFormChange}
+                                                placeholder="Enter album description (optional)"
+                                                rows="3"
+                                            />
+                                        </div>
+                                        <div className={styles.formActions}>
+                                            <Button type="submit" disabled={updateAlbumMutation.isPending}>
+                                                <Save size={18} />
+                                                {updateAlbumMutation.isPending ? 'Saving...' : 'Save Changes'}
+                                            </Button>
+                                            <Button
+                                                type="button"
+                                                onClick={handleCancelEdit}
+                                                variant="secondary"
+                                            >
+                                                Cancel
+                                            </Button>
+                                        </div>
+                                    </form>
+                                ) : (
+                                    <div className={styles.albumDetailsView}>
+                                        <p><strong>Title:</strong> {managingAlbum.title}</p>
+                                        {managingAlbum.description && (
+                                            <p><strong>Description:</strong> {managingAlbum.description}</p>
+                                        )}
+                                        <p><strong>Total Media:</strong> {managingAlbum.media_files?.length || 0} items</p>
+                                        <p><strong>Created:</strong> {new Date(managingAlbum.created_at).toLocaleDateString()}</p>
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <div className={styles.section}>
+                                <div className={styles.sectionHeader}>
+                                    <h3>Media in Album</h3>
+                                    <Button
+                                        onClick={() => setShowAddMediaForm(!showAddMediaForm)}
+                                        variant={showAddMediaForm ? 'secondary' : 'primary'}
+                                    >
+                                        {showAddMediaForm ? 'Close library' : <><Plus size={16} /> Add from Library</>}
+                                    </Button>
+                                </div>
+
+                                {showAddMediaForm && (
+                                    <div className={styles.addMediaForm}>
+                                        <div className={styles.searchWrapper}>
+                                            <input
+                                                type="text"
+                                                placeholder="Search your library..."
+                                                value={mediaSearch}
+                                                onChange={(e) => setMediaSearch(e.target.value)}
+                                                className={styles.searchInput}
+                                                autoFocus
+                                            />
+                                        </div>
+                                        <div className={styles.mediaLibraryList}>
+                                            {filteredMedia.length === 0 ? (
+                                                <p className={styles.noResults}>No matching media found</p>
+                                            ) : (
+                                                filteredMedia.map(media => {
+                                                    const alreadyIn = isMediaInAlbum(media.id);
+                                                    return (
+                                                        <div key={media.id} className={clsx(styles.libraryItem, alreadyIn && styles.disabled)}>
+                                                            <div className={styles.itemThumb}>
+                                                                {media.mime_type.startsWith('image/') ? (
+                                                                    <img src={getThumbnailUrl(media.url)} alt="" />
+                                                                ) : (
+                                                                    <div className={styles.thumbPlaceholder}>
+                                                                        <File size={20} />
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                            <div className={styles.itemInfo}>
+                                                                <span className={styles.itemName}>{media.filename}</span>
+                                                                <span className={styles.itemMeta}>{media.mime_type}</span>
+                                                            </div>
+                                                            <Button
+                                                                onClick={() => addMediaMutation.mutate({
+                                                                    albumId: managingAlbum.id,
+                                                                    mediaId: media.id
+                                                                })}
+                                                                disabled={addMediaMutation.isPending || alreadyIn}
+                                                                variant={alreadyIn ? 'secondary' : 'primary'}
+                                                            >
+                                                                {alreadyIn ? 'Added' : 'Add'}
+                                                            </Button>
+                                                        </div>
+                                                    );
+                                                })
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {managingAlbum.media_files && managingAlbum.media_files.length > 0 ? (
+                                    <div className={styles.enhancedMediaGrid}>
+                                        {managingAlbum.media_files.map(media => (
+                                            <div key={media.id} className={styles.mediaThumbnailCard}>
+                                                <div className={styles.cardPreview}>
+                                                    {media.mime_type.startsWith('image/') ? (
+                                                        <img src={getThumbnailUrl(media.url)} alt={media.filename} />
+                                                    ) : (
+                                                        <div className={styles.fileIcon}>
+                                                            <File size={32} />
+                                                        </div>
+                                                    )}
+                                                    <button
+                                                        className={styles.removeBtn}
+                                                        onClick={() => removeMediaMutation.mutate({
+                                                            albumId: managingAlbum.id,
+                                                            mediaId: media.id
+                                                        })}
+                                                        disabled={removeMediaMutation.isPending}
+                                                        title="Remove from album"
+                                                    >
+                                                        <X size={16} />
+                                                    </button>
+                                                </div>
+                                                <div className={styles.cardLabel} title={media.filename}>
+                                                    {media.filename}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className={styles.emptyMedia}>
+                                        <p>This album is empty.</p>
+                                        <p>Add some media from your library to get started!</p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                )}
+            </Modal>
         </div>
     );
 }
