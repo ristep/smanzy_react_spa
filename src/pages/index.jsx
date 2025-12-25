@@ -7,4 +7,4 @@ export { default as Profile } from '@/pages/Profile';
 export { default as MediaManager } from '@/pages/MediaManager';
 export { default as UpdateMedia } from '@/pages/UpdateMedia';
 export { default as NotFound } from '@/pages/NotFound';
-export { default as MediaThumb } from '@/pages/MediaThumb';
+export { default as MediaManagerCards } from '@/pages/MediaManagerCards';

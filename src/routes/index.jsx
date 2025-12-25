@@ -1,7 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom';
 import MainLayout from '@/layout/MainLayout';
 
-import { Home, About, Login, Register, Profile, MediaManager, UpdateMedia, NotFound, MediaThumb } from '@/pages';
+import { Home, About, Login, Register, Profile, MediaManager, UpdateMedia, NotFound, MediaManagerCards } from '@/pages';
 
 const router = createBrowserRouter([
     {
@@ -38,8 +38,8 @@ const router = createBrowserRouter([
                 element: <UpdateMedia />,
             },
             {
-                path: 'mediathumbs',
-                element: <MediaThumb />,
+                path: 'mediacards',
+                element: <MediaManagerCards />,
             },
             {
                 path: '*',

@@ -6,3 +6,4 @@ export { default as Button } from '@/components/Button';
 export { default as Panel } from '@/components/Panel';
 export { default as ThemeToggle } from '@/components/ThemeToggle';
 export { default as ThemeProvider } from '@/components/ThemeProvider';
+export { default as MediaCard } from '@/components/MediaCard';

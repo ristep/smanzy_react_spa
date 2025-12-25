@@ -3,13 +3,12 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/services/api';
 import Button from '@/components/Button';
-import IconButton from '@/components/IconButton';
 import Panel from '@/components/Panel';
-import { Edit, Download, Trash2, File, FileText, FileArchive, Image, Video, FileMusic } from 'lucide-react';
+import MediaCard from '@/components/MediaCard';
 import styles from './index.module.scss';
 import clsx from 'clsx';
 
-export default function MediaThumb() {
+export default function MediaManagerCards() {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const queryClient = useQueryClient();
@@ -123,34 +122,6 @@ export default function MediaThumb() {
 
     const handleDownload = (media) => {
         window.open(import.meta.env.VITE_API_BASE_URL.replace('/api', '') + media.url, '_blank');
-    };
-
-    const formatFileSize = (bytes) => {
-        if (bytes === 0) return '0 Bytes';
-        const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
-    };
-
-    const formatDate = (dateString) => {
-        return new Date(dateString).toLocaleDateString(undefined, {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-    };
-
-    const getFileIcon = (mimeType) => {
-        if (!mimeType) return <File />;
-        if (mimeType.startsWith('image/')) return <Image />;
-        if (mimeType.startsWith('video/')) return <Video />;
-        if (mimeType.startsWith('audio/')) return <FileMusic />;
-        if (mimeType.includes('pdf')) return <FileText />;
-        if (mimeType.includes('zip') || mimeType.includes('rar')) return <FileArchive />;
-        return <File />;
     };
 
     if (isPending) {
@@ -286,6 +257,7 @@ export default function MediaThumb() {
                         <table className={styles.table}>
                             <thead className={styles.thead}>
                                 <tr>
+                                    <th className={styles.th}>Thumbnail</th>
                                     <th className={styles.th}>File Name</th>
                                     <th className={styles.th}>Type</th>
                                     <th className={styles.th}>Size</th>
@@ -295,48 +267,15 @@ export default function MediaThumb() {
                             </thead>
                             <tbody className={styles.tbody}>
                                 {mediaList.map((media) => (
-                                    <tr key={media.id} className={styles.tr}>
-                                        <td className={styles.td}>
-                                            <div className={styles.fileName}>{media.filename}</div>
-                                            <div className={styles.fileId}>ID: {media.id}</div>
-                                        </td>
-                                        <td className={styles.td}>
-                                            <span className={styles.typeBadge}>
-                                                {getFileIcon(media.mime_type)}
-                                            </span>
-                                        </td>
-                                        <td className={clsx(styles.td, styles.textSecondary)}>
-                                            {formatFileSize(media.size)}
-                                        </td>
-                                        <td className={clsx(styles.td, styles.textSecondary)}>
-                                            {formatDate(media.created_at)}
-                                        </td>
-                                        <td className={clsx(styles.td, styles.right)}>
-                                            <div className="flex justify-end gap-2">
-                                                <IconButton
-                                                    onClick={() => handleDownload(media)}
-                                                    disabled={!canView(media)}
-                                                    title="Download"
-                                                >
-                                                    <Download />
-                                                </IconButton>
-                                                <IconButton
-                                                    onClick={() => handleEdit(media)}
-                                                    disabled={!canManage(media)}
-                                                    title="Edit"
-                                                >
-                                                    <Edit />
-                                                </IconButton>
-                                                <IconButton
-                                                    onClick={() => handleDelete(media)}
-                                                    disabled={!canManage(media)}
-                                                    title="Delete"
-                                                >
-                                                    <Trash2 />
-                                                </IconButton>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                    <MediaCard
+                                        key={media.id}
+                                        media={media}
+                                        onEdit={handleEdit}
+                                        onDelete={handleDelete}
+                                        onDownload={handleDownload}
+                                        canManage={canManage(media)}
+                                        canView={canView(media)}
+                                    />
                                 ))}
                             </tbody>
                         </table>
