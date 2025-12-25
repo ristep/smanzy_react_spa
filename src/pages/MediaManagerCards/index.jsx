@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/services/api';
@@ -7,16 +7,59 @@ import Panel from '@/components/Panel';
 import MediaCard from '@/components/MediaCard';
 import styles from './index.module.scss';
 
+const CARD_BASE_WIDTH = 200; // Base card width in pixels
+const GAP_SIZE = 16; // Gap size in pixels (matches $spacing-4)
+const ROWS_TO_SHOW = 3; // Show up to 3 rows
+const MIN_LIMIT = 6; // Minimum items per page
+
 export default function MediaManagerCards() {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
     const queryClient = useQueryClient();
     const [selectedFile, setSelectedFile] = useState(null);
     const [uploadProgress, setUploadProgress] = useState(0);
+    const [limit, setLimit] = useState(12); // Default limit
     const fileInputRef = useRef(null);
+    const containerRef = useRef(null);
+
+    // Calculate columns based on viewport width
+    const calculateColumns = () => {
+        if (!containerRef.current) return 4;
+
+        const containerWidth = containerRef.current.offsetWidth;
+        if (containerWidth === 0) return 4; // Fallback if not yet rendered
+        
+        const cardWithGap = CARD_BASE_WIDTH + GAP_SIZE;
+        const columns = Math.max(1, Math.floor(containerWidth / cardWithGap));
+        return columns;
+    };
+
+    // Calculate optimal limit based on viewport
+    const calculateOptimalLimit = () => {
+        const columns = calculateColumns();
+        const newLimit = Math.max(MIN_LIMIT, columns * ROWS_TO_SHOW);
+        setLimit(newLimit);
+    };
+
+    // Handle window resize and initial mount
+    useEffect(() => {
+        // Calculate after a small delay to ensure DOM is ready
+        const timer = setTimeout(() => {
+            calculateOptimalLimit();
+        }, 100);
+
+        const handleResize = () => {
+            calculateOptimalLimit();
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => {
+            clearTimeout(timer);
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
 
     const page = parseInt(searchParams.get('page')) || 1;
-    const limit = 4; // Number of items per page
 
     // Fetch media list
     const { isPending, error, data } = useQuery({
@@ -252,7 +295,7 @@ export default function MediaManagerCards() {
                         <p className={styles.emptySubtext}>Upload a file or check other pages</p>
                     </div>
                 ) : (
-                    <div className={styles.gridContainer}>
+                    <div ref={containerRef} className={styles.gridContainer}>
                         {mediaList.map((media) => (
                             <MediaCard
                                 key={media.id}

@@ -46,6 +46,10 @@ export default function MediaCard({
         return mimeType?.startsWith('image/');
     };
 
+    const isVideoFile = (mimeType) => {
+        return mimeType?.startsWith('video/');
+    };
+
     const getThumbnailUrl = () => {
         const baseUrl = import.meta.env.VITE_API_BASE_URL.replace('/api', '');
         return baseUrl + media.url;
@@ -58,8 +62,8 @@ export default function MediaCard({
                 <tr className={styles.tr}>
                     <td className={styles.td}>
                         <div 
-                            className={clsx(styles.thumbnailWrapper, isImageFile(media.mime_type) && styles.clickable)}
-                            onClick={() => isImageFile(media.mime_type) && setShowPreview(true)}
+                            className={clsx(styles.thumbnailWrapper, (isImageFile(media.mime_type) || isVideoFile(media.mime_type)) && styles.clickable)}
+                            onClick={() => (isImageFile(media.mime_type) || isVideoFile(media.mime_type)) && setShowPreview(true)}
                         >
                             {isImageFile(media.mime_type) ? (
                                 <img
@@ -67,8 +71,18 @@ export default function MediaCard({
                                     alt={media.filename}
                                     className={styles.thumbnail}
                                 />
+                            ) : isVideoFile(media.mime_type) ? (
+                                <video
+                                    src={getThumbnailUrl()}
+                                    className={styles.thumbnail}
+                                />
                             ) : (
                                 <div className={styles.thumbnailPlaceholder}>
+                                    {getFileIcon(media.mime_type)}
+                                </div>
+                            )}
+                            {(isImageFile(media.mime_type) || isVideoFile(media.mime_type)) && (
+                                <div className={styles.thumbnailOverlay}>
                                     {getFileIcon(media.mime_type)}
                                 </div>
                             )}
@@ -120,8 +134,8 @@ export default function MediaCard({
                 <div className={styles.card}>
                     <div className={styles.cardThumbnail}>
                         <div 
-                            className={clsx(styles.largeThumbWrapper, isImageFile(media.mime_type) && styles.clickable)}
-                            onClick={() => isImageFile(media.mime_type) && setShowPreview(true)}
+                            className={clsx(styles.largeThumbWrapper, (isImageFile(media.mime_type) || isVideoFile(media.mime_type)) && styles.clickable)}
+                            onClick={() => (isImageFile(media.mime_type) || isVideoFile(media.mime_type)) && setShowPreview(true)}
                         >
                             {isImageFile(media.mime_type) ? (
                                 <img
@@ -129,8 +143,18 @@ export default function MediaCard({
                                     alt={media.filename}
                                     className={styles.largeThumb}
                                 />
+                            ) : isVideoFile(media.mime_type) ? (
+                                <video
+                                    src={getThumbnailUrl()}
+                                    className={styles.largeThumb}
+                                />
                             ) : (
                                 <div className={styles.largeThumbPlaceholder}>
+                                    {getFileIcon(media.mime_type)}
+                                </div>
+                            )}
+                            {(isImageFile(media.mime_type) || isVideoFile(media.mime_type)) && (
+                                <div className={styles.largeThumbOverlay}>
                                     {getFileIcon(media.mime_type)}
                                 </div>
                             )}
@@ -185,8 +209,8 @@ export default function MediaCard({
                 </div>
             )}
 
-            {/* Image Preview Overlay */}
-            {showPreview && isImageFile(media.mime_type) && (
+            {/* Image/Video Preview Overlay */}
+            {showPreview && (isImageFile(media.mime_type) || isVideoFile(media.mime_type)) && (
                 <div 
                     className={styles.overlay}
                     onClick={() => setShowPreview(false)}
@@ -199,11 +223,20 @@ export default function MediaCard({
                         >
                             <X />
                         </button>
-                        <img
-                            src={getThumbnailUrl()}
-                            alt={media.filename}
-                            className={styles.largeImage}
-                        />
+                        {isImageFile(media.mime_type) ? (
+                            <img
+                                src={getThumbnailUrl()}
+                                alt={media.filename}
+                                className={styles.largeImage}
+                            />
+                        ) : (
+                            <video
+                                src={getThumbnailUrl()}
+                                className={styles.largeVideo}
+                                controls
+                                autoPlay
+                            />
+                        )}
                         <div className={styles.imageInfo}>
                             <p className={styles.imageName}>{media.filename}</p>
                         </div>
