@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Edit, Download, Trash2, File, FileText, FileArchive, Image, Video, FileMusic, X } from 'lucide-react';
 import IconButton from '@/components/IconButton';
+import { formatDateTime } from '@/utils/dateFormat';
 import styles from './index.module.scss';
 import clsx from 'clsx';
 
@@ -20,16 +21,6 @@ export default function MediaCard({
         const sizes = ['Bytes', 'KB', 'MB', 'GB'];
         const i = Math.floor(Math.log(bytes) / Math.log(k));
         return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
-    };
-
-    const formatDate = (dateString) => {
-        return new Date(dateString).toLocaleDateString(undefined, {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
     };
 
     const getFileIcon = (mimeType) => {
@@ -61,7 +52,7 @@ export default function MediaCard({
                 // Table row variant
                 <tr className={styles.tr}>
                     <td className={styles.td}>
-                        <div 
+                        <div
                             className={clsx(styles.thumbnailWrapper, (isImageFile(media.mime_type) || isVideoFile(media.mime_type)) && styles.clickable)}
                             onClick={() => (isImageFile(media.mime_type) || isVideoFile(media.mime_type)) && setShowPreview(true)}
                         >
@@ -101,7 +92,7 @@ export default function MediaCard({
                         {formatFileSize(media.size)}
                     </td>
                     <td className={clsx(styles.td, styles.textSecondary)}>
-                        {formatDate(media.created_at)}
+                        {formatDateTime(media.created_at)}
                     </td>
                     <td className={clsx(styles.td, styles.right)}>
                         <div className="flex justify-end gap-2">
@@ -133,7 +124,7 @@ export default function MediaCard({
                 // Grid card variant
                 <div className={styles.card}>
                     <div className={styles.cardThumbnail}>
-                        <div 
+                        <div
                             className={clsx(styles.largeThumbWrapper, (isImageFile(media.mime_type) || isVideoFile(media.mime_type)) && styles.clickable)}
                             onClick={() => (isImageFile(media.mime_type) || isVideoFile(media.mime_type)) && setShowPreview(true)}
                         >
@@ -178,7 +169,7 @@ export default function MediaCard({
                             </div>
                             <div className={styles.metaItem}>
                                 <span className={styles.metaLabel}>Uploaded:</span>
-                                <span className={styles.metaValue}>{formatDate(media.created_at)}</span>
+                                <span className={styles.metaValue}>{formatDateTime(media.created_at)}</span>
                             </div>
                         </div>
 
@@ -211,7 +202,7 @@ export default function MediaCard({
 
             {/* Image/Video Preview Overlay */}
             {showPreview && (isImageFile(media.mime_type) || isVideoFile(media.mime_type)) && (
-                <div 
+                <div
                     className={styles.overlay}
                     onClick={() => setShowPreview(false)}
                 >

@@ -7,6 +7,7 @@ import api from '@/services/api';
 import Button from '@/components/Button';
 import IconButton from '@/components/IconButton';
 import Panel from '@/components/Panel';
+import { formatDateTime } from '@/utils/dateFormat';
 import styles from './index.module.scss';
 import clsx from 'clsx';
 
@@ -132,16 +133,6 @@ export default function MediaManager() {
         const sizes = ['Bytes', 'KB', 'MB', 'GB'];
         const i = Math.floor(Math.log(bytes) / Math.log(k));
         return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
-    };
-
-    const formatDate = (dateString) => {
-        return new Date(dateString).toLocaleDateString(undefined, {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
     };
 
     const getFileIcon = (mimeType) => {
@@ -310,7 +301,7 @@ export default function MediaManager() {
                                             {formatFileSize(media.size)}
                                         </td>
                                         <td className={clsx(styles.td, styles.textSecondary)}>
-                                            {formatDate(media.created_at)}
+                                            {formatDateTime(media.created_at)}
                                         </td>
                                         <td className={clsx(styles.td, styles.right)}>
                                             <div className="flex justify-end gap-2">

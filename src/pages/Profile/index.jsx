@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/services/api';
 import Button from '@/components/Button';
+import { formatDate } from '@/utils/dateFormat';
 import styles from './index.module.scss';
 import clsx from 'clsx';
 
@@ -158,7 +159,7 @@ export default function Profile() {
                     <div className={styles.field}>
                         <dt className={styles.label}>Member since</dt>
                         <dd className={styles.value}>
-                            {new Date(user.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
+                            {formatDate(user.created_at)}
                         </dd>
                     </div>
                 </dl>
