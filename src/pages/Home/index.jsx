@@ -1,80 +1,152 @@
-import { Link } from 'react-router-dom';
-import { ArrowRight, Zap, Shield, Globe } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import styles from './index.module.scss';
 
+const API_KEY = 'AIzaSyDlfkraqNdGhYVVp1VIEhMmfX3VshCJ4Pw';
+
+const VIDEO_DATA = [
+    {
+        id: 'DfK5fjVDFJ8',
+        title: 'Christmas Cafe Jazz Night 🎄Soft piano and Fire Crackling Perfect for Calm Evenings'
+    },
+    {
+        id: 'Ve4Qn_XOm1U',
+        title: 'Christmas Cabin Jazz Piano Ambience 🎄Fireplace crackling & Snowy weather perfect for Focus & Relax'
+    },
+    {
+        id: '20AHch36zA4',
+        title: 'Christmas Cabin Soft Jazz Piano 🎄Fireplace, Snowy weather perfect for Focus & relaxation'
+    },
+    {
+        id: 'Q2teAT73Fy4',
+        title: 'Cozy Christmas Cabin at Night 🎄Fire crackling and soft Jazz | Snowfall & Winter Ambience'
+    },
+    {
+        id: 'Pf0IMNvvCkE',
+        title: 'Christmas Jazz Piano Ambience 🎄Snowy weather for Studying & Relaxation 💆🏻‍♀️'
+    },
+    {
+        id: 'chNUH15xtbE',
+        title: 'Christmas Cabin Jazz Piano Ambience 🎄✨ Warm Fireplace, Snowy weather for Focus & Relaxation'
+    }
+];
+
 export default function Home() {
+    const [videos, setVideos] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        fetchVideoStats();
+    }, []);
+
+    async function fetchVideoStats() {
+        if (!API_KEY || API_KEY === 'YOUR_API_KEY_HERE') {
+            // Fallback: show videos without view counts
+            setVideos(VIDEO_DATA.map(v => ({ ...v, views: 'API Key Required' })));
+            setLoading(false);
+            return;
+        }
+
+        const ids = VIDEO_DATA.map(v => v.id).join(',');
+        const url = `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${ids}&key=${API_KEY}`;
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data.items) {
+                const videosWithStats = VIDEO_DATA.map(video => {
+                    const stats = data.items.find(item => item.id === video.id);
+                    const viewCount = stats?.statistics?.viewCount;
+                    const views = viewCount
+                        ? `${Number(viewCount).toLocaleString()} views`
+                        : 'Views hidden';
+                    return { ...video, views };
+                });
+                setVideos(videosWithStats);
+            } else {
+                setVideos(VIDEO_DATA.map(v => ({ ...v, views: 'Error loading views' })));
+            }
+        } catch (error) {
+            console.error('Error fetching video stats:', error);
+            setVideos(VIDEO_DATA.map(v => ({ ...v, views: 'Error loading views' })));
+        } finally {
+            setLoading(false);
+        }
+    }
+
     return (
         <div className={styles.home}>
-            {/* Background Gradients */}
-            <div className={styles.backgroundEffects}>
-                <div className={styles.effect1} />
-                <div className={styles.effect2} />
-            </div>
+            <header className={styles.header}>
+                <div className={styles.logo}>SmAnZaRy</div>
+                <h1 className={styles.channelName}>Welcome to SmAnZaRy YouTube Channel</h1>
+                <p className={styles.description}>
+                    Cozy comfort escape environments! <br />
+                    Relax with ambient jazz piano, crackling fireplaces, snowy nights, and peaceful Christmas vibes. <br />
+                    Perfect for focus, study, relaxation, and calm evenings.
+                </p>
+                <a
+                    href="https://www.youtube.com/@smanzary?sub_confirmation=1"
+                    className={styles.subscribeBtn}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    Subscribe Now
+                </a>
+            </header>
 
-            {/* Hero Section */}
-            <div className={styles.hero}>
-                <div className={styles.heroContainer}>
-                    <h1 className={styles.title}>
-                        Foundations for <span className={styles.gradientText}>Modern Media</span>
-                    </h1>
-                    <p className={styles.subtitle}>
-                        Smanzy provides a robust full-stack solution for managing your digital assets.
-                        Built with Go and React for unwavering performance.
-                    </p>
-                    <div className={styles.heroActions}>
-                        <Link
-                            to="/register"
-                            className={styles.btnPrimary}
-                        >
-                            Get Started
-                            <ArrowRight className="w-5 h-5 ml-2" />
-                        </Link>
-                        <Link
-                            to="/about"
-                            className={styles.btnSecondary}
-                        >
-                            Learn More
-                        </Link>
-                    </div>
+            <section className={styles.videosSection}>
+                <h2>Featured Videos</h2>
+                <div className={styles.videosGrid}>
+                    {loading ? (
+                        <p className={styles.loading}>Loading videos...</p>
+                    ) : (
+                        videos.map(video => (
+                            <VideoCard key={video.id} video={video} />
+                        ))
+                    )}
                 </div>
-            </div>
+                <p style={{ marginTop: '40px' }}>
+                    <a
+                        href="https://www.youtube.com/@smanzary/videos"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        View All Videos on YouTube
+                    </a>
+                </p>
+            </section>
 
-            {/* Features Section */}
-            <div className={styles.features}>
-                <div className={styles.heroContainer}>
-                    <div className={styles.featureGrid}>
-                        <FeatureCard
-                            icon={<Zap className="w-6 h-6 text-blue-400" />}
-                            title="Lightning Fast"
-                            description="Powered by a Go backend, Smanzy delivers responses in milliseconds, ensuring your users never wait."
-                        />
-                        <FeatureCard
-                            icon={<Shield className="w-6 h-6 text-violet-400" />}
-                            title="Enterprise Security"
-                            description="Built-in authentication and role-based access control to keep your data safe and compliant."
-                        />
-                        <FeatureCard
-                            icon={<Globe className="w-6 h-6 text-teal-400" />}
-                            title="Global Scale"
-                            description="Designed to handle millions of requests. Deploy anywhere and scale effortlessy with our modern architecture."
-                        />
-                    </div>
-                </div>
-            </div>
+            <footer className={styles.footer}>
+                &copy; 2025 SmAnZaRy | <a
+                    href="https://www.youtube.com/@smanzary"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    https://www.youtube.com/@smanzary
+                </a>
+            </footer>
         </div>
     );
 }
 
-function FeatureCard({ icon, title, description }) {
+function VideoCard({ video }) {
+    const videoUrl = `https://www.youtube.com/watch?v=${video.id}`;
+    const thumbUrl = `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`;
+
     return (
-        <div className={styles.featureCard}>
-            <div className={styles.iconWrapper}>
-                {icon}
+        <a
+            href={videoUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.videoCard}
+        >
+            <img src={thumbUrl} alt={video.title} className={styles.videoThumb} />
+            <div className={styles.videoInfo}>
+                <div className={styles.videoTitle}>{video.title}</div>
+                <div className={styles.videoViews}>
+                    {video.views === 'API Key Required' ? 'Set API key to see live views' : video.views}
+                </div>
             </div>
-            <h3 className={styles.featureTitle}>{title}</h3>
-            <p className={styles.featureDesc}>
-                {description}
-            </p>
-        </div>
+        </a>
     );
 }
