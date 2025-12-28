@@ -1,15 +1,17 @@
 import { useState, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Edit, Download, Trash2, File, FileText, FileArchive, Image, Video, FileMusic } from 'lucide-react';
+import { Edit, Download, Trash2 } from 'lucide-react';
 
 import api from '@/services/api';
 import Button from '@/components/Button';
 import IconButton from '@/components/IconButton';
 import Panel from '@/components/Panel';
 import { formatDateTime } from '@/utils/dateFormat';
+import { formatFileSize } from '@/utils/fileUtils';
 import styles from './index.module.scss';
 import clsx from 'clsx';
+import { FileIcon } from '@/components';
 
 export default function MediaManager() {
     const navigate = useNavigate();
@@ -125,24 +127,6 @@ export default function MediaManager() {
 
     const handleDownload = (media) => {
         window.open(import.meta.env.VITE_API_BASE_URL.replace('/api', '') + media.url, '_blank');
-    };
-
-    const formatFileSize = (bytes) => {
-        if (bytes === 0) return '0 Bytes';
-        const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
-    };
-
-    const getFileIcon = (mimeType) => {
-        if (!mimeType) return <File />;
-        if (mimeType.startsWith('image/')) return <Image />;
-        if (mimeType.startsWith('video/')) return <Video />;
-        if (mimeType.startsWith('audio/')) return <FileMusic />;
-        if (mimeType.includes('pdf')) return <FileText />;
-        if (mimeType.includes('zip') || mimeType.includes('rar')) return <FileArchive />;
-        return <File />;
     };
 
     if (isPending) {
@@ -294,7 +278,7 @@ export default function MediaManager() {
                                         </td>
                                         <td className={styles.td}>
                                             <span className={styles.typeBadge}>
-                                                {getFileIcon(media.mime_type)}
+                                                <FileIcon mimeType={media.mime_type} />
                                             </span>
                                         </td>
                                         <td className={clsx(styles.td, styles.textSecondary)}>

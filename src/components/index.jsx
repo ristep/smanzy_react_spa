@@ -9,3 +9,5 @@ export { default as ThemeProvider } from '@/components/ThemeProvider';
 export { default as MediaCard } from '@/components/MediaCard';
 export { default as Modal } from '@/components/Modal';
 export { default as VideoCard } from '@/components/VideoCard';
+export { default as FileIcon } from '@/components/FileIcon';
+export { default as MediaPreviewOverlay } from '@/components/MediaPreviewOverlay';

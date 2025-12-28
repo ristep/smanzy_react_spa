@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { Edit, Download, Trash2, File, FileText, FileArchive, Image, Video, FileMusic, X } from 'lucide-react';
-import IconButton from '@/components/IconButton';
-import { formatDateTime } from '@/utils/dateFormat';
+import React, { useState } from 'react';
+import { Edit, Download, Trash2 } from 'lucide-react';
+import { IconButton, FileIcon, MediaPreviewOverlay } from '@/components';
+import { formatFileSize, getThumbnailUrl, isImageFile, isVideoFile } from '@/utils/fileUtils';
 import styles from './index.module.scss';
 import clsx from 'clsx';
 
@@ -12,244 +12,94 @@ export default function MediaCard({
     onDownload,
     canManage = false,
     canView = true,
-    variant = 'grid', // 'grid' or 'table'
 }) {
     const [showPreview, setShowPreview] = useState(false);
-    const formatFileSize = (bytes) => {
-        if (bytes === 0) return '0 Bytes';
-        const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
-    };
 
-    const getFileIcon = (mimeType) => {
-        if (!mimeType) return <File />;
-        if (mimeType.startsWith('image/')) return <Image />;
-        if (mimeType.startsWith('video/')) return <Video />;
-        if (mimeType.startsWith('audio/')) return <FileMusic />;
-        if (mimeType.includes('pdf')) return <FileText />;
-        if (mimeType.includes('zip') || mimeType.includes('rar')) return <FileArchive />;
-        return <File />;
-    };
-
-    const isImageFile = (mimeType) => {
-        return mimeType?.startsWith('image/');
-    };
-
-    const isVideoFile = (mimeType) => {
-        return mimeType?.startsWith('video/');
-    };
-
-    const getThumbnailUrl = () => {
-        // If URL is already absolute (starts with http:// or https://), return as-is
-        if (media.url.startsWith('http://') || media.url.startsWith('https://')) {
-            return media.url;
-        }
-        // Otherwise, prepend the API base URL for relative paths
-        const baseUrl = import.meta.env.VITE_API_BASE_URL.replace('/api', '');
-        return baseUrl + media.url;
-    };
+    const isPreviewable = isImageFile(media.mime_type) || isVideoFile(media.mime_type);
+    const thumbUrl = getThumbnailUrl(media);
 
     return (
         <>
-            {variant === 'table' ? (
-                // Table row variant
-                <tr className={styles.tr}>
-                    <td className={styles.td}>
-                        <div
-                            className={clsx(styles.thumbnailWrapper, (isImageFile(media.mime_type) || isVideoFile(media.mime_type)) && styles.clickable)}
-                            onClick={() => (isImageFile(media.mime_type) || isVideoFile(media.mime_type)) && setShowPreview(true)}
-                        >
-                            {isImageFile(media.mime_type) ? (
+            <div className={styles.card}>
+                <div className={styles.cardThumbnail}>
+                    <div
+                        className={clsx(styles.largeThumbWrapper, isPreviewable && styles.clickable)}
+                        onClick={() => isPreviewable && setShowPreview(true)}
+                    >
+                        {isPreviewable ? (
+                            isImageFile(media.mime_type) ? (
                                 <img
-                                    src={getThumbnailUrl()}
-                                    alt={media.filename}
-                                    className={styles.thumbnail}
-                                />
-                            ) : isVideoFile(media.mime_type) ? (
-                                <video
-                                    src={getThumbnailUrl()}
-                                    className={styles.thumbnail}
-                                />
-                            ) : (
-                                <div className={styles.thumbnailPlaceholder}>
-                                    {getFileIcon(media.mime_type)}
-                                </div>
-                            )}
-                            {(isImageFile(media.mime_type) || isVideoFile(media.mime_type)) && (
-                                <div className={styles.thumbnailOverlay}>
-                                    {getFileIcon(media.mime_type)}
-                                </div>
-                            )}
-                        </div>
-                    </td>
-                    <td className={styles.td}>
-                        <div className={styles.fileName}>{media.filename}</div>
-                        <div className={styles.fileId}>ID: {media.id}</div>
-                    </td>
-                    <td className={styles.td}>
-                        <span className={styles.typeBadge}>
-                            {getFileIcon(media.mime_type)}
-                        </span>
-                    </td>
-                    <td className={clsx(styles.td, styles.textSecondary)}>
-                        {formatFileSize(media.size)}
-                    </td>
-                    <td className={clsx(styles.td, styles.textSecondary)}>
-                        {formatDateTime(media.created_at)}
-                    </td>
-                    <td className={clsx(styles.td, styles.right)}>
-                        <div className="flex justify-end gap-2">
-                            <IconButton
-                                onClick={() => onDownload(media)}
-                                disabled={!canView}
-                                title="Download"
-                            >
-                                <Download />
-                            </IconButton>
-                            <IconButton
-                                onClick={() => onEdit(media)}
-                                disabled={!canManage}
-                                title="Edit"
-                            >
-                                <Edit />
-                            </IconButton>
-                            <IconButton
-                                onClick={() => onDelete(media)}
-                                disabled={!canManage}
-                                title="Delete"
-                            >
-                                <Trash2 />
-                            </IconButton>
-                        </div>
-                    </td>
-                </tr>
-            ) : (
-                // Grid card variant
-                <div className={styles.card}>
-                    <div className={clsx(styles.cardThumbnail, (isVideoFile(media.mime_type) || media.mime_type === 'video/youtube') && styles.videoThumbnail)}>
-                        <div
-                            className={clsx(styles.largeThumbWrapper, (isImageFile(media.mime_type) || isVideoFile(media.mime_type)) && styles.clickable)}
-                            onClick={() => (isImageFile(media.mime_type) || isVideoFile(media.mime_type)) && setShowPreview(true)}
-                        >
-                            {isImageFile(media.mime_type) || media.mime_type === 'video/youtube' ? (
-                                <img
-                                    src={getThumbnailUrl()}
+                                    src={thumbUrl}
                                     alt={media.filename}
                                     className={styles.largeThumb}
                                 />
-                            ) : isVideoFile(media.mime_type) ? (
+                            ) : (
                                 <video
-                                    src={getThumbnailUrl()}
+                                    src={thumbUrl}
                                     className={styles.largeThumb}
                                 />
-                            ) : (
-                                <div className={styles.largeThumbPlaceholder}>
-                                    {getFileIcon(media.mime_type)}
-                                </div>
-                            )}
-                            {(isImageFile(media.mime_type) || isVideoFile(media.mime_type)) && (
-                                <div className={styles.largeThumbOverlay}>
-                                    {getFileIcon(media.mime_type)}
-                                </div>
-                            )}
-                        </div>
-                    </div>
-
-                    <div className={styles.cardContent}>
-                        <div className={styles.cardHeader}>
-                            <h3 className={styles.cardTitle} title={media.filename}>
-                                {media.filename}
-                            </h3>
-                            <span className={styles.cardBadge}>
-                                {getFileIcon(media.mime_type)}
-                            </span>
-                        </div>
-
-                        <div className={styles.cardMeta}>
-                            {media.mime_type === 'video/youtube' ? (
-                                // YouTube video metadata
-                                <div className={styles.metaItem}>
-                                    <span className={styles.metaValue} style={{ width: '100%', textAlign: 'left' }}>
-                                        {media.views || 'Loading views...'}
-                                    </span>
-                                </div>
-                            ) : (
-                                // Regular file metadata
-                                <>
-                                    <div className={styles.metaItem}>
-                                        <span className={styles.metaLabel}>Size:</span>
-                                        <span className={styles.metaValue}>{formatFileSize(media.size)}</span>
-                                    </div>
-                                    <div className={styles.metaItem}>
-                                        <span className={styles.metaLabel}>Uploaded:</span>
-                                        <span className={styles.metaValue}>{formatDateTime(media.created_at)}</span>
-                                    </div>
-                                </>
-                            )}
-                        </div>
-
-                        <div className={styles.cardActions}>
-                            <IconButton
-                                onClick={() => onDownload(media)}
-                                disabled={!canView}
-                                title="Download"
-                            >
-                                <Download size={18} />
-                            </IconButton>
-                            <IconButton
-                                onClick={() => onEdit(media)}
-                                disabled={!canManage}
-                                title="Edit"
-                            >
-                                <Edit size={18} />
-                            </IconButton>
-                            <IconButton
-                                onClick={() => onDelete(media)}
-                                disabled={!canManage}
-                                title="Delete"
-                            >
-                                <Trash2 size={18} />
-                            </IconButton>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Image/Video Preview Overlay */}
-            {showPreview && (isImageFile(media.mime_type) || isVideoFile(media.mime_type)) && (
-                <div
-                    className={styles.overlay}
-                    onClick={() => setShowPreview(false)}
-                >
-                    <div className={styles.overlayContent} onClick={(e) => e.stopPropagation()}>
-                        <button
-                            className={styles.closeButton}
-                            onClick={() => setShowPreview(false)}
-                            title="Close"
-                        >
-                            <X />
-                        </button>
-                        {isImageFile(media.mime_type) ? (
-                            <img
-                                src={getThumbnailUrl()}
-                                alt={media.filename}
-                                className={styles.largeImage}
-                            />
+                            )
                         ) : (
-                            <video
-                                src={getThumbnailUrl()}
-                                className={styles.largeVideo}
-                                controls
-                                autoPlay
-                            />
+                            <div className={styles.largeThumbPlaceholder}>
+                                <FileIcon mimeType={media.mime_type} size={48} />
+                            </div>
                         )}
-                        <div className={styles.imageInfo}>
-                            <p className={styles.imageName}>{media.filename}</p>
-                        </div>
+                        {isPreviewable && (
+                            <div className={styles.largeThumbOverlay}>
+                                <FileIcon mimeType={media.mime_type} size={20} />
+                            </div>
+                        )}
                     </div>
                 </div>
+
+                <div className={styles.cardContent}>
+                    <div className={styles.cardHeader}>
+                        <h3 className={styles.cardTitle} title={media.filename}>
+                            {media.filename}
+                        </h3>
+                        <span className={styles.cardBadge}>
+                            <FileIcon mimeType={media.mime_type} size={16} />
+                        </span>
+                    </div>
+
+                    <div className={styles.cardMeta}>
+                        <div className={styles.metaItem}>
+                            <span className={styles.metaLabel}>Size:</span>
+                            <span className={styles.metaValue}>{formatFileSize(media.size)}</span>
+                        </div>
+                    </div>
+
+                    <div className={styles.cardActions}>
+                        <IconButton
+                            onClick={() => onDownload(media)}
+                            disabled={!canView}
+                            title="Download"
+                        >
+                            <Download size={18} />
+                        </IconButton>
+                        <IconButton
+                            onClick={() => onEdit(media)}
+                            disabled={!canManage}
+                            title="Edit"
+                        >
+                            <Edit size={18} />
+                        </IconButton>
+                        <IconButton
+                            onClick={() => onDelete(media)}
+                            disabled={!canManage}
+                            title="Delete"
+                        >
+                            <Trash2 size={18} />
+                        </IconButton>
+                    </div>
+                </div>
+            </div>
+
+            {showPreview && isPreviewable && (
+                <MediaPreviewOverlay
+                    media={media}
+                    onClose={() => setShowPreview(false)}
+                />
             )}
         </>
     );

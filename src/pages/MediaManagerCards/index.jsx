@@ -28,7 +28,7 @@ export default function MediaManagerCards() {
 
         const containerWidth = containerRef.current.offsetWidth;
         if (containerWidth === 0) return 4; // Fallback if not yet rendered
-        
+
         const cardWithGap = CARD_BASE_WIDTH + GAP_SIZE;
         const columns = Math.max(1, Math.floor(containerWidth / cardWithGap));
         return columns;
@@ -305,7 +305,6 @@ export default function MediaManagerCards() {
                                 onDownload={handleDownload}
                                 canManage={canManage(media)}
                                 canView={canView(media)}
-                                variant="grid"
                             />
                         ))}
                     </div>
