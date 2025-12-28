@@ -75,42 +75,6 @@
     margin: 0 auto;
 }
 
-.videoCard {
-    background-color: transparent;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    transition: transform 0.3s;
-    text-decoration: none;
-    color: inherit;
-    display: block;
-
-    &:hover {
-        transform: scale(1.05);
-    }
-}
-
-.videoThumb {
-    width: 100%;
-    height: auto;
-    display: block;
-}
-
-.videoInfo {
-    padding: 10px;
-}
-
-.videoTitle {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 8px;
-    color: #ffffff;
-}
-
-.videoViews {
-    font-size: 14px;
-    color: #aaaaaa;
-}
 
 .loading {
     color: #ff0000;
