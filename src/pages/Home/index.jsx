@@ -115,16 +115,6 @@ export default function Home() {
                     </a>
                 </p>
             </section>
-
-            <footer className={styles.footer}>
-                &copy; 2025 SmAnZaRy | <a
-                    href="https://www.youtube.com/@smanzary"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    https://www.youtube.com/@smanzary
-                </a>
-            </footer>
         </div>
     );
 }

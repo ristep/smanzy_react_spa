@@ -19,6 +19,11 @@ html {
 
 body {
     background-color: var(--color-background);
+    background-image: url('/src/assets/background.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
     color: var(--color-text-primary);
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     line-height: 1.5;
