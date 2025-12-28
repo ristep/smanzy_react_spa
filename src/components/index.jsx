@@ -8,3 +8,4 @@ export { default as ThemeToggle } from '@/components/ThemeToggle';
 export { default as ThemeProvider } from '@/components/ThemeProvider';
 export { default as MediaCard } from '@/components/MediaCard';
 export { default as Modal } from '@/components/Modal';
+export { default as VideoCard } from '@/components/VideoCard';

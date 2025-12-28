@@ -2,44 +2,32 @@
 @use '@/styles/abstracts/mixins' as *;
 
 .footer {
-    background-color: rgba(50, 50, 50, 0.81);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    // Fallback for older browsers
+    background-color: rgba(45, 27, 78, 0.8);
+    // Modern browsers with color-mix support
+    background-color: color-mix(in srgb, var(--color-background-secondary) 80%, transparent);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid var(--color-border);
     margin-top: auto;
-    @include theme-transition;
-}
-
-.footer {
     padding: 20px;
+    text-align: center;
     font-size: 14px;
+    color: var(--color-text-primary);
+    @include theme-transition;
+
+    p {
+        margin: 5px 0;
+    }
 
     a {
-        color: #ff0000;
+        color: var(--color-accent);
         text-decoration: none;
+        transition: color $transition-fast, text-decoration 0.2s ease;
 
         &:hover {
+            color: var(--color-accent-hover);
             text-decoration: underline;
         }
     }
-}
-
-.container {
-    max-width: $breakpoint-xl;
-    margin: 0 auto;
-    padding: $spacing-8 $spacing-4;
-
-    @include breakpoint($breakpoint-sm) {
-        padding-left: $spacing-6;
-        padding-right: $spacing-6;
-    }
-
-    @include breakpoint($breakpoint-lg) {
-        padding-left: $spacing-8;
-        padding-right: $spacing-8;
-    }
-}
-
-.text {
-    text-align: center;
-    font-size: 0.875rem;
-    color: #ffffff;
 }

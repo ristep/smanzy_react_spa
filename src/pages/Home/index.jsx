@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import VideoCard from '@/components/VideoCard';
 import styles from './index.module.scss';
 
 const API_KEY = 'AIzaSyDlfkraqNdGhYVVp1VIEhMmfX3VshCJ4Pw';
@@ -116,27 +117,5 @@ export default function Home() {
                 </p>
             </section>
         </div>
-    );
-}
-
-function VideoCard({ video }) {
-    const videoUrl = `https://www.youtube.com/watch?v=${video.id}`;
-    const thumbUrl = `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`;
-
-    return (
-        <a
-            href={videoUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.videoCard}
-        >
-            <img src={thumbUrl} alt={video.title} className={styles.videoThumb} />
-            <div className={styles.videoInfo}>
-                <div className={styles.videoTitle}>{video.title}</div>
-                <div className={styles.videoViews}>
-                    {video.views === 'API Key Required' ? 'Set API key to see live views' : video.views}
-                </div>
-            </div>
-        </a>
     );
 }

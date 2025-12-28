@@ -42,6 +42,11 @@ export default function MediaCard({
     };
 
     const getThumbnailUrl = () => {
+        // If URL is already absolute (starts with http:// or https://), return as-is
+        if (media.url.startsWith('http://') || media.url.startsWith('https://')) {
+            return media.url;
+        }
+        // Otherwise, prepend the API base URL for relative paths
         const baseUrl = import.meta.env.VITE_API_BASE_URL.replace('/api', '');
         return baseUrl + media.url;
     };
@@ -123,12 +128,12 @@ export default function MediaCard({
             ) : (
                 // Grid card variant
                 <div className={styles.card}>
-                    <div className={styles.cardThumbnail}>
+                    <div className={clsx(styles.cardThumbnail, (isVideoFile(media.mime_type) || media.mime_type === 'video/youtube') && styles.videoThumbnail)}>
                         <div
                             className={clsx(styles.largeThumbWrapper, (isImageFile(media.mime_type) || isVideoFile(media.mime_type)) && styles.clickable)}
                             onClick={() => (isImageFile(media.mime_type) || isVideoFile(media.mime_type)) && setShowPreview(true)}
                         >
-                            {isImageFile(media.mime_type) ? (
+                            {isImageFile(media.mime_type) || media.mime_type === 'video/youtube' ? (
                                 <img
                                     src={getThumbnailUrl()}
                                     alt={media.filename}
@@ -163,14 +168,26 @@ export default function MediaCard({
                         </div>
 
                         <div className={styles.cardMeta}>
-                            <div className={styles.metaItem}>
-                                <span className={styles.metaLabel}>Size:</span>
-                                <span className={styles.metaValue}>{formatFileSize(media.size)}</span>
-                            </div>
-                            <div className={styles.metaItem}>
-                                <span className={styles.metaLabel}>Uploaded:</span>
-                                <span className={styles.metaValue}>{formatDateTime(media.created_at)}</span>
-                            </div>
+                            {media.mime_type === 'video/youtube' ? (
+                                // YouTube video metadata
+                                <div className={styles.metaItem}>
+                                    <span className={styles.metaValue} style={{ width: '100%', textAlign: 'left' }}>
+                                        {media.views || 'Loading views...'}
+                                    </span>
+                                </div>
+                            ) : (
+                                // Regular file metadata
+                                <>
+                                    <div className={styles.metaItem}>
+                                        <span className={styles.metaLabel}>Size:</span>
+                                        <span className={styles.metaValue}>{formatFileSize(media.size)}</span>
+                                    </div>
+                                    <div className={styles.metaItem}>
+                                        <span className={styles.metaLabel}>Uploaded:</span>
+                                        <span className={styles.metaValue}>{formatDateTime(media.created_at)}</span>
+                                    </div>
+                                </>
+                            )}
                         </div>
 
                         <div className={styles.cardActions}>
